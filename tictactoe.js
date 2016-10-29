@@ -2,7 +2,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { createStore } = require('redux');
 
-const defaultState = {board: ['_', '_', '_', '_', '_', '_', '_', '_', '_'], player: 'X'};
+const defaultState = {board: '_________'.split(''), player: 'X'};
 
 const tictactoe = (state=defaultState, action) => {
   switch (action.type) {
