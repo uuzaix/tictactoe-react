@@ -7,13 +7,14 @@ const defaultState = {board: '_________'.split(''), player: 'X'};
 const tictactoe = (state=defaultState, action) => {
   switch (action.type) {
     case 'MOVE':
-      var newPlayer;
-      if (state.player === 'X') {
-        newPlayer = 'O'
-      } else {
-        newPlayer = 'X'
-      }
-      return Object.assign({}, state, {board:[...state.board.slice(0, parseInt(action.index)), state.player, ...state.board.slice(parseInt(action.index) + 1)], player: newPlayer})
+      return Object.assign({}, state, {
+        board: [
+          ...state.board.slice(0, action.index),
+          state.player,
+          ...state.board.slice(action.index + 1)
+        ],
+        player: state.player === 'X' ? 'O' : 'X'
+      });
   default:
     return state;
   }
@@ -41,7 +42,7 @@ const Cell = ({id, content}) => (
 
 const Tictactoe = React.createClass({
   render: function() {
-    var cells = this.props.board.map((cell, index) =>
+    const cells = this.props.board.map((cell, index) =>
       <Cell key={index} id={index} content={cell} />);
     return (
       <div>
