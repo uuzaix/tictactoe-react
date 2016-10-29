@@ -7,7 +7,15 @@ const defaultState = {board: ['_', '_', '_', '_', '_', '_', '_', '_', '_'], play
 const tictactoe = (state=defaultState, action) => {
   switch (action.type) {
     case 'MOVE':
-      return Object.assign({}, state, {board:[...state.board.slice(0, action.index), state.player, ...state.board.slice(action.index + 1)]})
+      var newPlayer;
+      if (state.player === 'X') {
+        newPlayer = 'O'
+      } else {
+        newPlayer = 'X'
+      }
+      return Object.assign({}, state, {board:[...state.board.slice(0, parseInt(action.index)), state.player, ...state.board.slice(parseInt(action.index) + 1)], player: newPlayer})
+  default:
+    return state;
   }
 }
 
@@ -24,25 +32,26 @@ const store = createStore(tictactoe, window.__REDUX_DEVTOOLS_EXTENSION__ && wind
 
 
 const Cell = ({id, content}) => (
-  <span id={id} onClick={()=> 
-    store.dispatch({type: 'MOVE', index: {id}}
+  <div className='cell' id={id} onClick={()=> 
+    store.dispatch({type: 'MOVE', index: id}
     )}>
     {content}
-  </span>
+  </div>
 )
 
 const Tictactoe = React.createClass({
   render: function() {
+    var cells = this.props.board.map((cell, index) =>
+      <Cell key={index} id={index} content={cell} />);
     return (
       <div>
-        {this.props.board.map((cell, index) =>
-          <Cell key={index} content={cell} />)}
+        {cells.slice(0, 3)} <br />
+        {cells.slice(3, 6)} <br />
+        {cells.slice(6, 9)}
       </div>
-    );
+      );
   }
 });
-
-// var gameBord = ['_', '_', '_', '_', '_', '_', '_', '_', '_'];
 
 const render = () => {
   ReactDOM.render(
