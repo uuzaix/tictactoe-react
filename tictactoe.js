@@ -2,18 +2,19 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { createStore } = require('redux');
 
-const defaultState = {board: ['_', '_', '_', '_', '_', '_', '_', '_', '_'], player: 'X'};
+const defaultState = {board: '_________'.split(''), player: 'X'};
 
 const tictactoe = (state=defaultState, action) => {
   switch (action.type) {
     case 'MOVE':
-      var newPlayer;
-      if (state.player === 'X') {
-        newPlayer = 'O'
-      } else {
-        newPlayer = 'X'
-      }
-      return Object.assign({}, state, {board:[...state.board.slice(0, parseInt(action.index)), state.player, ...state.board.slice(parseInt(action.index) + 1)], player: newPlayer})
+      return Object.assign({}, state, {
+        board: [
+          ...state.board.slice(0, action.index),
+          state.player,
+          ...state.board.slice(action.index + 1)
+        ],
+        player: state.player === 'X' ? 'O' : 'X'
+      });
   default:
     return state;
   }
@@ -32,7 +33,7 @@ const store = createStore(tictactoe, window.__REDUX_DEVTOOLS_EXTENSION__ && wind
 
 
 const Cell = ({id, content}) => (
-  <div className='cell' id={id} onClick={()=> 
+  <div className='cell' id={id} onClick={()=>
     store.dispatch({type: 'MOVE', index: id}
     )}>
     {content}
@@ -41,7 +42,7 @@ const Cell = ({id, content}) => (
 
 const Tictactoe = React.createClass({
   render: function() {
-    var cells = this.props.board.map((cell, index) =>
+    const cells = this.props.board.map((cell, index) =>
       <Cell key={index} id={index} content={cell} />);
     return (
       <div>
