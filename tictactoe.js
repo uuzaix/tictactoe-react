@@ -1,41 +1,55 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
+const { createStore } = require('redux');
+
+const defaultState = {board: ['_', '_', '_', '_', '_', '_', '_', '_', '_'], player: 'X'};
+
+const tictactoe = (state=defaultState, action) => {
+  switch (action.type) {
+    case 'MOVE':
+      return Object.assign({}, state, {board:[...state.board.slice(0, action.index), state.player, ...state.board.slice(action.index + 1)]})
+  }
+}
+
+module.exports = { tictactoe };
+
+const store = createStore(tictactoe, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+
+// store.subscribe(() => console.log(store.getState()));
+
+// store.dispatch({type: 'MOVE', index: 0});
+// store.dispatch({type: 'MOVE', index: 4});
+// store.dispatch({type: 'MOVE', index: 8});
+
 
 
 const Cell = ({id, content}) => (
-  <span id={id}>{content}</span>
+  <span id={id} onClick={()=> 
+    store.dispatch({type: 'MOVE', index: {id}}
+    )}>
+    {content}
+  </span>
 )
 
 const Tictactoe = React.createClass({
-  render() {
-    var rows = [];
-    // const cells = (
-    //   <div>
-    //   {this.props.board.map((cell, index) =>
-    //     <Cell key={index} content={cell} />)}
-    //   </div>
-    // );
-    this.props.board.forEach(function(cell, index) {
-      rows.push(<Cell key={index} id={index} content={cell} />)
-    });
+  render: function() {
     return (
       <div>
-        {rows.slice(0, 3)} <br />
-        {rows.slice(3, 6)} <br />
-        {rows.slice(6, 9)} <br />
+        {this.props.board.map((cell, index) =>
+          <Cell key={index} content={cell} />)}
       </div>
-    )
+    );
   }
-}
-)
+});
 
-var gameBord = ['O', 'O', 'O', 'X', 'X', 'X', 'O', 'O', 'O'];
+// var gameBord = ['_', '_', '_', '_', '_', '_', '_', '_', '_'];
 
 const render = () => {
   ReactDOM.render(
-    <Tictactoe board={gameBord} />,
+    <Tictactoe {...store.getState()} />,
     document.getElementById('game')
   );
 };
 
+store.subscribe(render);
 render();
