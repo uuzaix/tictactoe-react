@@ -33,7 +33,7 @@ const store = createStore(tictactoe, window.__REDUX_DEVTOOLS_EXTENSION__ && wind
 
 
 const Cell = ({id, content}) => (
-  <div className='cell' id={id} onClick={()=> 
+  <div className='cell' id={id} onClick={()=>
     store.dispatch({type: 'MOVE', index: id}
     )}>
     {content}
