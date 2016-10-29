@@ -1,6 +1,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const { createStore } = require('redux');
+const { Provider, connect } = require('react-redux');
 
 const defaultState = {board: '_________'.split(''), player: 'X'};
 
@@ -32,31 +33,52 @@ const store = createStore(tictactoe, window.__REDUX_DEVTOOLS_EXTENSION__ && wind
 
 
 
-const Cell = ({id, content}) => (
-  <div className='cell' id={id} onClick={()=>
-    store.dispatch({type: 'MOVE', index: id}
-    )}>
+const Cell = ({id, content, onCellClick}) => (
+  <div className='cell' id={id} onClick={() =>
+    onCellClick(id)}>
     {content}
   </div>
-)
+);
 
-const Tictactoe = React.createClass({
-  render: function() {
-    const cells = this.props.board.map((cell, index) =>
-      <Cell key={index} id={index} content={cell} />);
-    return (
-      <div>
-        {cells.slice(0, 3)} <br />
-        {cells.slice(3, 6)} <br />
-        {cells.slice(6, 9)}
-      </div>
-      );
+const Board = ({board, onCellClick}) => {
+  console.log(board);
+  const cells = board.map((cell, index) =>
+      <Cell key={index} id={index} content={cell} onCellClick={onCellClick} />
+    );
+  return (
+    <div>
+      {cells.slice(0, 3)} <br />
+      {cells.slice(3, 6)} <br />
+      {cells.slice(6, 9)}
+    </div>
+  );
+};
+
+const mapStateToProps = (state) => {
+  return {
+    board: state.board
   }
-});
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onCellClick: (id) => {
+      dispatch({type: 'MOVE', index: id})
+    }
+  }
+};
+
+const Tictactoe = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Board);
+
 
 const render = () => {
   ReactDOM.render(
-    <Tictactoe {...store.getState()} />,
+    <Provider store={createStore(tictactoe)}>
+      <Tictactoe {...store.getState()} />
+    </Provider>,
     document.getElementById('game')
   );
 };
