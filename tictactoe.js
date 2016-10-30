@@ -66,14 +66,9 @@ const Tictactoe = connect(
 )(Board);
 
 
-const render = () => {
-  ReactDOM.render(
-    <Provider store={createStore(tictactoe)}>
-      <Tictactoe {...store.getState()} />
-    </Provider>,
-    document.getElementById('game')
-  );
-};
-
-store.subscribe(render);
-render();
+ReactDOM.render(
+  <Provider store={store}>
+    <Tictactoe />
+  </Provider>,
+  document.getElementById('game')
+);
