@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --watch tictactoe.js build/bundle.js --module-bind js=babel",
-    "dev": "webpack-dev-server --module-bind js=babel tictactoe.js"
+    "build": "webpack",
+    "dev": "webpack-dev-server"
   },
   "author": "",
   "license": "ISC",
