@@ -25,14 +25,6 @@ module.exports = { tictactoe };
 
 const store = createStore(tictactoe, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
-// store.subscribe(() => console.log(store.getState()));
-
-// store.dispatch({type: 'MOVE', index: 0});
-// store.dispatch({type: 'MOVE', index: 4});
-// store.dispatch({type: 'MOVE', index: 8});
-
-
-
 const Cell = ({id, content, onCellClick}) => (
   <div className='cell' id={id} onClick={() =>
     onCellClick(id)}>
