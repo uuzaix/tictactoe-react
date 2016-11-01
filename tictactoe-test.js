@@ -1,6 +1,7 @@
 const expect = require('expect');
 
 const { tictactoe } = require('./tictactoe.js');
+const { findEmpty, isFinished } = require('./game.js');
 
 const testMove = () => {
   let stateBefore = {board: ['_', '_', '_', '_', '_', '_', '_', '_', '_'], player: 'X'};
@@ -13,5 +14,17 @@ const testMove = () => {
   expect(tictactoe(stateBefore, action)).toEqual(stateAfter);
 }
 
-testMove();
+const testChooseSymbol = () => {
+  let stateBefore = {board: ['_', '_', '_', '_', '_', '_', '_', '_', '_'], player: '?'};
+  let stateAfter = {board: ['_', '_', '_', '_', '_', '_', '_', '_', '_'], player: 'X'};
+  let action = {type: 'CHOOSE_SYMBOL', symbol: 'X'};
+  expect(tictactoe(stateBefore, action)).toEqual(stateAfter);
+  stateBefore = {board: ['_', '_', '_', '_', '_', '_', '_', '_', '_'], player: '?'};
+  stateAfter = {board: ['_', '_', '_', '_', '_', '_', '_', '_', '_'], player: 'O'};
+  action = {type: 'CHOOSE_SYMBOL', symbol: 'O'};
+  expect(tictactoe(stateBefore, action)).toEqual(stateAfter);
+}
+
+testChooseSymbol();
+testChooseSymbol();
 console.log('tests pass');
