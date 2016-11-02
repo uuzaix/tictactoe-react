@@ -23,7 +23,7 @@ const tictactoe = (state=defaultState, action) => {
   }
 }
 
-//module.exports = { tictactoe };
+module.exports = { tictactoe };
 
 const store = createStore(tictactoe, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
