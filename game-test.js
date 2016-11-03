@@ -1,6 +1,6 @@
 const expect = require('expect');
 
-const { findEmpty, isFinished, findPreWin, makeMove, calculateScore } = require('./game.js');
+const { findEmpty, isFinished, findPreWin, makeMove, calculateScore, minMax } = require('./game.js');
 
 const testfindEmpty = () => {
   let board = ['_', '_', '_', '_', '_', '_', '_', '_', '_'];
@@ -36,20 +36,20 @@ const testFindPreWin = () => {
   expect(findPreWin(board, player)).toEqual([6,8]);
 }
 
-const testMakeMove = () => {
-  let board = ['_', '_', '_', '_', '_', '_', '_', '_', '_'];
-  let player = 'X';
-  expect(makeMove(board, player)).toEqual(0);
-  board = ['O', 'X', 'X', 'X', 'X', 'O', 'O', 'X', 'X'];
-  player = 'O';
-  expect(makeMove(board, player)).toEqual(-1);
-  board = ['O', '_', '_', '_', 'X', 'O', 'O', '_', '_'];
-  player = 'O';
-  expect(makeMove(board, player)).toEqual(3);
-  board = ['O', '_', '_', '_', 'X', 'O', 'O', '_', '_'];
-  player = 'X';
-  expect(makeMove(board, player)).toEqual(3);
-}
+// const testMakeMove = () => {
+//   let board = ['_', '_', '_', '_', '_', '_', '_', '_', '_'];
+//   let player = 'X';
+//   expect(makeMove(board, player)).toEqual(0);
+//   board = ['O', 'X', 'X', 'X', 'X', 'O', 'O', 'X', 'X'];
+//   player = 'O';
+//   expect(makeMove(board, player)).toEqual(-1);
+//   board = ['O', '_', '_', '_', 'X', 'O', 'O', '_', '_'];
+//   player = 'O';
+//   expect(makeMove(board, player)).toEqual(3);
+//   board = ['O', '_', '_', '_', 'X', 'O', 'O', '_', '_'];
+//   player = 'X';
+//   expect(makeMove(board, player)).toEqual(3);
+// }
 
 const testCalculateScore = () => {
   let board = ['X', 'X', 'X', '_', 'O', 'O', '_', '_', '_'];
@@ -63,10 +63,41 @@ const testCalculateScore = () => {
   expect(calculateScore(board, player)).toEqual(-6); //O won
 }
 
+const testMinMax = () => {
+  let board = ['X', 'X', 'X', '_', 'O', 'O', '_', '_', '_'];
+  let player = 'X';
+  expect(minMax(board, player)).toEqual(7); //X won
+  board = ['X', 'X', 'O', 'O', 'O', 'X', 'X', 'O', 'X'];
+  player = 'O';
+  expect(minMax(board, player)).toEqual(0); //draw
+  board = ['O', 'X', 'O', 'O', 'X', 'X', 'O', 'X', '_'];
+  player = 'X';
+  expect(minMax(board, player)).toEqual(-6); //O won
+  board = ['O', 'X', 'O', '_', 'X', 'X', 'O', 'X', '_'];
+  player = 'O';
+  expect(minMax(board, player)).toEqual(-6);
+  board = ['O', 'X', 'O', '_', 'X', '_', 'X', 'O', '_'];
+  player = 'O';
+  expect(minMax(board, player)).toEqual(0);
+}
+
+const testMakeMove = () => {
+  let board = ['X', 'X', '_', '_', 'O', '_', '_', 'O', '_'];
+  let player = 'X';
+  expect(makeMove(board, player)).toEqual(2);
+  board = ['X', '_', '_', '_', '_', '_', '_', '_', '_'];
+  player = 'O';
+  expect(makeMove(board, player)).toEqual(1);
+  board = ['X', '_', '_', '_', 'O', '_', '_', '_', '_'];
+  player = 'X';
+  expect(makeMove(board, player)).toEqual(8);
+}
+
 testfindEmpty();
 testIsFinished();
 testFindPreWin();
 testMakeMove();
 testCalculateScore();
+testMinMax();
 
 console.log('tests pass');
