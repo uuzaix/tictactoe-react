@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 function findEmpty(board) {
   let emptyCells = [];
   board.forEach(function(el, i) {
@@ -36,9 +38,9 @@ function isFinished(board) {
 
 function findPreWin(board, player) {
   const empty = findEmpty(board);
-  var winCells = [];
+  let winCells = [];
   empty.forEach(function(cell) {
-    var newBoard = board.slice();
+    const newBoard = board.slice();
     newBoard.splice(cell, 1, player);
     if (isFinished(newBoard) === player + ' won') {
       winCells.push(cell);
@@ -65,15 +67,15 @@ function findPreWin(board, player) {
 // }
 
 function calculateScore(board, player) {
-  var score = 0;
+  let score = 0;
   const opp = player === 'X'? 'O' : 'X'
   if (isFinished(board) === player + ' won') {
-    var steps = board.filter((cell) => {
+    const steps = board.filter((cell) => {
       return cell === player}).length;
     score = 10 - steps;
   }
   if (isFinished(board) === opp + ' won') {
-    var steps = board.filter((cell) => {
+    const steps = board.filter((cell) => {
       return cell === opp}).length;
     score = -10 + steps;
   }
@@ -84,14 +86,14 @@ function minMax(board, player) {
   if (isFinished(board)) {
     return calculateScore(board, player);
   } else {
-    var possibleMoves = [];
-    var score = player === 'X' ? -20 : 20;
+    let possibleMoves = [];
+    let score = player === 'X' ? -20 : 20;
     findEmpty(board).forEach((cell) => {
       possibleMoves.push([...board.slice(0, cell), player, ...board.slice(cell + 1)]);
     });
     possibleMoves.forEach((nextBoard) => {
-      var nextPlayer = player === 'X'? 'O' : 'X';
-      var nextScore = minMax(nextBoard, nextPlayer);
+      const nextPlayer = player === 'X'? 'O' : 'X';
+      const nextScore = minMax(nextBoard, nextPlayer);
       if (player === 'X') {
         if (nextScore > score) {
           score = nextScore;
@@ -107,22 +109,19 @@ function minMax(board, player) {
 };
 
 function makeMove(board, player) {
-  var availableCells = findEmpty(board);
-  var availableMove = availableCells.map((cell) => {
-    var minMaxValue = minMax([...board.slice(0, cell), player, ...board.slice(cell + 1)]);
-    var tempObj = {};
-    tempObj[cell] = minMaxValue;
-    return tempObj
+  const availableCells = findEmpty(board);
+  const availableMove = availableCells.map((cell) => {
+    const minMaxValue = minMax([...board.slice(0, cell), player, ...board.slice(cell + 1)]);
+    // console.log({cell, minMaxValue});
+    return {cell, minMaxValue}
   });
-  availableMove.sort((x, y) => {
-    return (y[Object.keys(y)[0]] - x[Object.keys(x)[0]]);
-  });
-  // console.log(availableMove);
+  const sortedMoves = _.orderBy(availableMove, 'minMaxValue', 'desc');
+  // console.log(sortedMoves);
   if (player === 'O') {
-    return Object.keys(availableMove[0])[0];
+    return _.first(sortedMoves).cell;
   }
   if (player === 'X') {
-    return Object.keys(availableMove[availableMove.length - 1])[0];
+    return _.last(sortedMoves).cell;
   }
 }
 
