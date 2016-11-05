@@ -14,19 +14,19 @@ function isFinished(board) {
   //check rows
   for (var i = 0; i <= 6; i += 3) {
     if (board[i] !== '_' && board[i] === board[i+1] && board[i] === board[i+2]) {
-      return board[i] + ' won';
+      return board[i];
     }
   }
   //check column
   for (var i = 0; i <= 2; i += 1) {
     if (board[i] !== '_' && board[i] === board[i+3] && board[i] === board[i+6]) {
-      return board[i] + ' won';
+      return board[i];
     }
   }
   //check diagonal
     for (var i = 0, j = 4; i <= 2; i += 2, j -= 2) {
     if (board[i] !== '_' && board[i] === board[i+j] && board[i] === board[i+2*j]) {
-      return board[i] + ' won';
+      return board[i];
     }
   }
   //check empty cells
@@ -36,70 +36,40 @@ function isFinished(board) {
   return false;
 };
 
-function findPreWin(board, player) {
-  const empty = findEmpty(board);
-  let winCells = [];
-  empty.forEach(function(cell) {
-    const newBoard = board.slice();
-    newBoard.splice(cell, 1, player);
-    if (isFinished(newBoard) === player + ' won') {
-      winCells.push(cell);
-    }
-  })
-  return winCells;
-}
-
-// function makeMove(board, player) {
-//   if (findEmpty(board).length === 9) {
-//     return 0 //should be one of the corners [0, 2, 6, 8]
-//   } else if (findEmpty(board).length === 0) {
-//     return -1 //?or smth else
-//   } else {
-//     if (findPreWin(board, player).length !== 0) {
-//       return findPreWin(board, player)[0];
-//     }
-//     const opp = player === 'X'? 'O' : 'X';
-//     if (findPreWin(board, opp).length !== 0) {
-//       return findPreWin(board, opp)[0];
-//     }
-//     return findEmpty(board)[0];
-//   }
-// }
-
-function calculateScore(board, player) {
+function calculateScore(board, AI) {
   let score = 0;
-  const opp = player === 'X'? 'O' : 'X'
-  if (isFinished(board) === player + ' won') {
+  const opp = AI === 'X'? 'O' : 'X';
+  if (isFinished(board) === AI) {
     const steps = board.filter((cell) => {
-      return cell === player}).length;
-    score = 10 - steps;
+      return cell === AI}).length;
+    score = -20 + steps;
   }
-  if (isFinished(board) === opp + ' won') {
+  if (isFinished(board) === opp) {
     const steps = board.filter((cell) => {
       return cell === opp}).length;
-    score = -10 + steps;
+    score = 20 - steps;
   }
   return score;
 }
 
-function minMax(board, player) {
-  if (isFinished(board)) {
-    return calculateScore(board, player);
+function minMax(board, player, AI) {
+  if (isFinished(board) !== false) {
+    return calculateScore(board, AI);
   } else {
     let possibleMoves = [];
-    let score = player === 'X' ? -20 : 20;
+    let score = player === AI ? 20 : -20;
     findEmpty(board).forEach((cell) => {
       possibleMoves.push([...board.slice(0, cell), player, ...board.slice(cell + 1)]);
     });
     possibleMoves.forEach((nextBoard) => {
       const nextPlayer = player === 'X'? 'O' : 'X';
-      const nextScore = minMax(nextBoard, nextPlayer);
-      if (player === 'X') {
-        if (nextScore > score) {
+      const nextScore = minMax(nextBoard, nextPlayer, AI);
+      if (player === AI) {
+        if (nextScore < score) {
           score = nextScore;
         }
       } else {
-        if (nextScore < score) {
+        if (nextScore > score) {
           score = nextScore;
         }
       }
@@ -110,19 +80,13 @@ function minMax(board, player) {
 
 function makeMove(board, player) {
   const availableCells = findEmpty(board);
+  const opp = player === 'X'? 'O' : 'X';
   const availableMove = availableCells.map((cell) => {
-    const minMaxValue = minMax([...board.slice(0, cell), player, ...board.slice(cell + 1)]);
-    // console.log({cell, minMaxValue});
+    const minMaxValue = minMax([...board.slice(0, cell), player, ...board.slice(cell + 1)], opp, player);
     return {cell, minMaxValue}
   });
-  const sortedMoves = _.orderBy(availableMove, 'minMaxValue', 'desc');
-  // console.log(sortedMoves);
-  if (player === 'O') {
+  const sortedMoves = _.sortBy(availableMove, 'minMaxValue');
     return _.first(sortedMoves).cell;
-  }
-  if (player === 'X') {
-    return _.last(sortedMoves).cell;
-  }
 }
 
-module.exports = { findEmpty, isFinished, findPreWin, makeMove, calculateScore, minMax };
+module.exports = { findEmpty, isFinished, calculateScore, minMax, makeMove };

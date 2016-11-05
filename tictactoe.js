@@ -2,13 +2,14 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { createStore } = require('redux');
 const { Provider, connect } = require('react-redux');
+const { makeMove } = require('./game.js');
 
 const defaultState = {board: '_________'.split(''), player: '?'};
 
 const tictactoe = (state=defaultState, action) => {
   switch (action.type) {
     case 'MOVE':
-      return Object.assign({}, state, {
+      const tempState = Object.assign({}, state, {
         board: [
           ...state.board.slice(0, action.index),
           state.player,
@@ -16,9 +17,19 @@ const tictactoe = (state=defaultState, action) => {
         ],
         player: state.player === 'X' ? 'O' : 'X'
       });
+      const nextMove = makeMove(tempState.board, tempState.player);
+      return Object.assign({}, tempState, {
+        board: [
+          ...tempState.board.slice(0, nextMove),
+          tempState.player,
+          ...tempState.board.slice(nextMove + 1)
+        ],
+        player: tempState.player === 'X' ? 'O' : 'X'
+      });
+
     case 'CHOOSE_SYMBOL':
       return Object.assign({}, state, {player: action.symbol})
-  default:
+    default:
     return state;
   }
 }
