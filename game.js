@@ -36,6 +36,16 @@ function isFinished(board) {
   return false;
 };
 
+function gameStatusMessage(status) {
+  let message;
+  if (status === 'draw') {
+    message = "It's draw!";
+  } else {
+    message = status + ' won!';
+  }
+  return message;
+}
+
 function calculateScore(board, AI) {
   let score = 0;
   const opp = AI === 'X'? 'O' : 'X';
@@ -89,4 +99,4 @@ function makeMove(board, player) {
     return _.first(sortedMoves).cell;
 }
 
-module.exports = { findEmpty, isFinished, calculateScore, minMax, makeMove };
+module.exports = { findEmpty, isFinished, calculateScore, minMax, makeMove, gameStatusMessage };

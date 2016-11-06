@@ -2,35 +2,51 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { createStore } = require('redux');
 const { Provider, connect } = require('react-redux');
-const { makeMove } = require('./game.js');
+const { makeMove, isFinished, gameStatusMessage } = require('./game.js');
 
-const defaultState = {board: '_________'.split(''), player: '?'};
+const defaultState = { board: '_________'.split(''), player: '?', status: 'wait' };
 
-const tictactoe = (state=defaultState, action) => {
+const tictactoe = (state = defaultState, action) => {
   switch (action.type) {
     case 'MOVE':
-      const tempState = Object.assign({}, state, {
-        board: [
-          ...state.board.slice(0, action.index),
-          state.player,
-          ...state.board.slice(action.index + 1)
-        ],
-        player: state.player === 'X' ? 'O' : 'X'
-      });
-      const nextMove = makeMove(tempState.board, tempState.player);
-      return Object.assign({}, tempState, {
-        board: [
-          ...tempState.board.slice(0, nextMove),
-          tempState.player,
-          ...tempState.board.slice(nextMove + 1)
-        ],
-        player: tempState.player === 'X' ? 'O' : 'X'
-      });
+      if (state.player !== '?' && state.status === 'running') {
+        const stateAfterUserMove = Object.assign({}, state, {
+          board: [
+            ...state.board.slice(0, action.index),
+            state.player,
+            ...state.board.slice(action.index + 1)
+          ],
+          player: state.player === 'X' ? 'O' : 'X'
+        });
+        if (isFinished(stateAfterUserMove.board) === false) {
+          const nextMove = makeMove(stateAfterUserMove.board, stateAfterUserMove.player);
+          const stateAfterBothMoves = Object.assign({}, stateAfterUserMove, {
+            board: [
+              ...stateAfterUserMove.board.slice(0, nextMove),
+              stateAfterUserMove.player,
+              ...stateAfterUserMove.board.slice(nextMove + 1)
+            ],
+            player: stateAfterUserMove.player === 'X' ? 'O' : 'X'
+          });
+          if (isFinished(stateAfterBothMoves.board) === false) {
+            return stateAfterBothMoves;
+          } else {
+            const newStatus = gameStatusMessage(isFinished(stateAfterBothMoves.board));
+            return Object.assign({}, stateAfterBothMoves, { status: newStatus })
+          }
+        } else {
+          const newStatus = gameStatusMessage(isFinished(stateAfterUserMove.board));
+          return Object.assign({}, stateAfterUserMove, { status: newStatus })
+        }
+
+      } else {
+        return state;
+      }
 
     case 'CHOOSE_SYMBOL':
-      return Object.assign({}, state, {player: action.symbol})
+      return Object.assign({}, state, { player: action.symbol, status: 'running' })
     default:
-    return state;
+      return state;
   }
 }
 
@@ -40,28 +56,36 @@ const store = createStore(tictactoe, window.__REDUX_DEVTOOLS_EXTENSION__ && wind
 
 const mapStateToSymProps = (state) => {
   return {
-    player: state.player
+    player: state.player,
+    status: state.status
   }
 };
 
 const mapDispatchToSymProps = (dispatch) => {
   return {
     onSymbolClick: (symbol) => {
-      dispatch({type: 'CHOOSE_SYMBOL', symbol: symbol})
+      dispatch({ type: 'CHOOSE_SYMBOL', symbol: symbol })
     }
   }
 };
 
-const PlayerSymbol = ({player, onSymbolClick}) => {
+const PlayerSymbol = ({player, status, onSymbolClick}) => {
   if (player === '?') {
     return (
       <p>Choose your symbol
-        <a href='#' onClick={() => onSymbolClick('X')}> X </a> or 
-        <a href='#'onClick={() => onSymbolClick('O')}> O </a></p>)
+        <a href='#' onClick={() => onSymbolClick('X')}> X </a> or
+        <a href='#' onClick={() => onSymbolClick('O')}> O </a></p>)
   } else {
-    return(
-      <p>It's {player} turn</p>
-    )
+    if (status === "running") {
+      return (
+        <p>It's {player} turn</p>
+      )
+    } else {
+      return (
+        <p>{status}</p>
+      )
+    }
+
   }
 };
 
@@ -78,10 +102,9 @@ const Cell = ({id, content, onCellClick}) => (
 );
 
 const Board = ({board, onCellClick}) => {
-  console.log(board);
   const cells = board.map((cell, index) =>
-      <Cell key={index} id={index} content={cell} onCellClick={onCellClick} />
-    );
+    <Cell key={index} id={index} content={cell} onCellClick={onCellClick} />
+  );
   return (
     <div>
       {cells.slice(0, 3)} <br />
@@ -100,7 +123,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onCellClick: (id) => {
-      dispatch({type: 'MOVE', index: id})
+      dispatch({ type: 'MOVE', index: id })
     }
   }
 };
