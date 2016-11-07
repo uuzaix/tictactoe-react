@@ -2,7 +2,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { createStore } = require('redux');
 const { Provider, connect } = require('react-redux');
-const { makeMove, isFinished, gameStatusMessage } = require('./game.js');
+const { makeBestMove, makeSomeMove, isFinished, gameStatusMessage } = require('./game.js');
 
 const defaultState = { board: '_________'.split(''), player: '?', status: 'wait' };
 
@@ -19,7 +19,13 @@ const tictactoe = (state = defaultState, action) => {
           player: state.player === 'X' ? 'O' : 'X'
         });
         if (isFinished(stateAfterUserMove.board) === false) {
-          const nextMove = makeMove(stateAfterUserMove.board, stateAfterUserMove.player);
+          const bestMoveChance = 70;
+          let nextMove;
+          if (Math.random()*100 <= bestMoveChance) {
+            nextMove = makeBestMove(stateAfterUserMove.board, stateAfterUserMove.player);
+          } else {
+            nextMove = makeSomeMove(stateAfterUserMove.board, stateAfterUserMove.player);
+          }
           const stateAfterBothMoves = Object.assign({}, stateAfterUserMove, {
             board: [
               ...stateAfterUserMove.board.slice(0, nextMove),

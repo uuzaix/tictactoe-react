@@ -13,19 +13,19 @@ function findEmpty(board) {
 function isFinished(board) {
   //check rows
   for (var i = 0; i <= 6; i += 3) {
-    if (board[i] !== '_' && board[i] === board[i+1] && board[i] === board[i+2]) {
+    if (board[i] !== '_' && board[i] === board[i + 1] && board[i] === board[i + 2]) {
       return board[i];
     }
   }
   //check column
   for (var i = 0; i <= 2; i += 1) {
-    if (board[i] !== '_' && board[i] === board[i+3] && board[i] === board[i+6]) {
+    if (board[i] !== '_' && board[i] === board[i + 3] && board[i] === board[i + 6]) {
       return board[i];
     }
   }
   //check diagonal
-    for (var i = 0, j = 4; i <= 2; i += 2, j -= 2) {
-    if (board[i] !== '_' && board[i] === board[i+j] && board[i] === board[i+2*j]) {
+  for (var i = 0, j = 4; i <= 2; i += 2, j -= 2) {
+    if (board[i] !== '_' && board[i] === board[i + j] && board[i] === board[i + 2 * j]) {
       return board[i];
     }
   }
@@ -48,7 +48,7 @@ function gameStatusMessage(status) {
 
 function calculateScore(board, AI) {
   let score = 0;
-  const opp = AI === 'X'? 'O' : 'X';
+  const opp = AI === 'X' ? 'O' : 'X';
   if (isFinished(board) === AI) {
     const steps = board.filter((cell) => {
       return cell === AI}).length;
@@ -72,7 +72,7 @@ function minMax(board, player, AI) {
       possibleMoves.push([...board.slice(0, cell), player, ...board.slice(cell + 1)]);
     });
     possibleMoves.forEach((nextBoard) => {
-      const nextPlayer = player === 'X'? 'O' : 'X';
+      const nextPlayer = player === 'X' ? 'O' : 'X';
       const nextScore = minMax(nextBoard, nextPlayer, AI);
       if (player === AI) {
         if (nextScore < score) {
@@ -88,15 +88,28 @@ function minMax(board, player, AI) {
   }
 };
 
-function makeMove(board, player) {
+function findAllMoves(board, player) {
   const availableCells = findEmpty(board);
-  const opp = player === 'X'? 'O' : 'X';
+  const opp = player === 'X' ? 'O' : 'X';
   const availableMove = availableCells.map((cell) => {
     const minMaxValue = minMax([...board.slice(0, cell), player, ...board.slice(cell + 1)], opp, player);
-    return {cell, minMaxValue}
+    return { cell, minMaxValue }
   });
-  const sortedMoves = _.sortBy(availableMove, 'minMaxValue');
-    return _.first(sortedMoves).cell;
+  return _.sortBy(availableMove, 'minMaxValue');
 }
 
-module.exports = { findEmpty, isFinished, calculateScore, minMax, makeMove, gameStatusMessage };
+function makeBestMove(board, player) {
+  const sortedMoves = findAllMoves(board, player);
+  return _.first(sortedMoves).cell; 
+}
+
+function makeSomeMove(board, player) {
+  const sortedMoves = findAllMoves(board, player);
+  if (sortedMoves.length >= 2) {
+    return sortedMoves[1].cell;
+  } else {
+    return sortedMoves[0].cell;
+  }
+}
+
+module.exports = { findEmpty, isFinished, calculateScore, minMax, gameStatusMessage, makeBestMove, makeSomeMove };
