@@ -2,44 +2,49 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { createStore } = require('redux');
 const { Provider, connect } = require('react-redux');
-const { makeBestMove, makeSomeMove, isFinished, gameStatusMessage } = require('./game.js');
+const { chooseBestMove, chooseSomeMove, isFinished, gameStatusMessage } = require('./game.js');
 
-const defaultState = { board: '_________'.split(''), player: '?', status: 'wait' };
+const defaultState = { board: '_________'.split(''), player: '?', status: 'wait', level: '' };
+
+const getStateAfterMove = (state, index) => {
+  return Object.assign({}, state, {
+    board: [
+      ...state.board.slice(0, index),
+      state.player,
+      ...state.board.slice(index + 1)
+    ],
+    player: state.player === 'X' ? 'O' : 'X'
+  });
+}
+
+const makeMove = (state) => {
+  let nextMove;
+  if (state.level === 'Profi') {
+    nextMove = chooseBestMove(state.board, state.player);
+  } else {
+    const bestMoveChance = 70;
+    if (Math.random() * 100 <= bestMoveChance) {
+      nextMove = chooseBestMove(state.board, state.player);
+    } else {
+      nextMove = chooseSomeMove(state.board, state.player);
+    }
+  }
+  const stateAfterBothMoves = getStateAfterMove(state, nextMove);
+  if (isFinished(stateAfterBothMoves.board) === false) {
+    return stateAfterBothMoves;
+  } else {
+    const newStatus = gameStatusMessage(isFinished(stateAfterBothMoves.board));
+    return Object.assign({}, stateAfterBothMoves, { status: newStatus })
+  }
+}
 
 const tictactoe = (state = defaultState, action) => {
   switch (action.type) {
     case 'MOVE':
-      if (state.player !== '?' && state.status === 'running') {
-        const stateAfterUserMove = Object.assign({}, state, {
-          board: [
-            ...state.board.slice(0, action.index),
-            state.player,
-            ...state.board.slice(action.index + 1)
-          ],
-          player: state.player === 'X' ? 'O' : 'X'
-        });
+      if (state.player !== '?' && state.status === 'running' && state.level !== '' && state.board[action.index] === '_') {
+        const stateAfterUserMove = getStateAfterMove(state, action.index);
         if (isFinished(stateAfterUserMove.board) === false) {
-          const bestMoveChance = 70;
-          let nextMove;
-          if (Math.random()*100 <= bestMoveChance) {
-            nextMove = makeBestMove(stateAfterUserMove.board, stateAfterUserMove.player);
-          } else {
-            nextMove = makeSomeMove(stateAfterUserMove.board, stateAfterUserMove.player);
-          }
-          const stateAfterBothMoves = Object.assign({}, stateAfterUserMove, {
-            board: [
-              ...stateAfterUserMove.board.slice(0, nextMove),
-              stateAfterUserMove.player,
-              ...stateAfterUserMove.board.slice(nextMove + 1)
-            ],
-            player: stateAfterUserMove.player === 'X' ? 'O' : 'X'
-          });
-          if (isFinished(stateAfterBothMoves.board) === false) {
-            return stateAfterBothMoves;
-          } else {
-            const newStatus = gameStatusMessage(isFinished(stateAfterBothMoves.board));
-            return Object.assign({}, stateAfterBothMoves, { status: newStatus })
-          }
+          return makeMove(stateAfterUserMove);
         } else {
           const newStatus = gameStatusMessage(isFinished(stateAfterUserMove.board));
           return Object.assign({}, stateAfterUserMove, { status: newStatus })
@@ -50,7 +55,11 @@ const tictactoe = (state = defaultState, action) => {
       }
 
     case 'CHOOSE_SYMBOL':
-      return Object.assign({}, state, { player: action.symbol, status: 'running' })
+      return Object.assign({}, state, { player: action.symbol, status: 'running' });
+
+    case 'CHOOSE_LEVEL':
+      return Object.assign({}, state, { level: action.level });
+
     default:
       return state;
   }
@@ -84,21 +93,53 @@ const PlayerSymbol = ({player, status, onSymbolClick}) => {
   } else {
     if (status === "running") {
       return (
-        <p>It's {player} turn</p>
+        <p>It's {player}turn </p>
       )
     } else {
       return (
         <p>{status}</p>
       )
     }
-
   }
 };
 
-const Chooser = connect(
+const SymbolChooser = connect(
   mapStateToSymProps,
   mapDispatchToSymProps
 )(PlayerSymbol);
+
+const mapStateToLevelProps = (state) => {
+  return {
+    level: state.level
+  }
+};
+
+const mapDispatchToLevelProps = (dispatch) => {
+  return {
+    onLevelClick: (level) => {
+      dispatch({ type: 'CHOOSE_LEVEL', level: level })
+    }
+  }
+};
+
+const Level = ({level, onLevelClick}) => {
+  if (level === '') {
+    return (
+      <p>Choose level
+        <a href='#' onClick={() => onLevelClick('Profi')}> Profi </a> or
+        <a href='#' onClick={() => onLevelClick('Novice')}> Novice </a></p>
+    )
+  } else {
+    return (
+      <p>Level: {level}</p>
+    )
+  }
+};
+
+const LevelChooser = connect(
+  mapStateToLevelProps,
+  mapDispatchToLevelProps
+)(Level);
 
 const Cell = ({id, content, onCellClick}) => (
   <div className='cell' id={id} onClick={() =>
@@ -142,8 +183,9 @@ const Tictactoe = connect(
 
 const App = () => (
   <div>
-    <Chooser />
+    <SymbolChooser />
     <Tictactoe />
+    <LevelChooser />
   </div>
 )
 

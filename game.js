@@ -98,12 +98,12 @@ function findAllMoves(board, player) {
   return _.sortBy(availableMove, 'minMaxValue');
 }
 
-function makeBestMove(board, player) {
+function chooseBestMove(board, player) {
   const sortedMoves = findAllMoves(board, player);
   return _.first(sortedMoves).cell; 
 }
 
-function makeSomeMove(board, player) {
+function chooseSomeMove(board, player) {
   const sortedMoves = findAllMoves(board, player);
   if (sortedMoves.length >= 2) {
     return sortedMoves[1].cell;
@@ -112,4 +112,4 @@ function makeSomeMove(board, player) {
   }
 }
 
-module.exports = { findEmpty, isFinished, calculateScore, minMax, gameStatusMessage, makeBestMove, makeSomeMove };
+module.exports = { findEmpty, isFinished, calculateScore, minMax, gameStatusMessage, chooseBestMove, chooseSomeMove };
