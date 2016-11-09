@@ -28,6 +28,9 @@ const tictactoe = (state = defaultState, action) => {
     case 'CHOOSE_LEVEL':
       return Object.assign({}, state, { level: action.level });
 
+    case 'RESET':
+      return defaultState;
+
     default:
       return state;
   }
@@ -99,7 +102,7 @@ const Level = ({level, onLevelClick}) => {
     )
   } else {
     return (
-      <p>Level: {level}</p>
+      <p>{level} level</p>
     )
   }
 };
@@ -163,3 +166,13 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('game')
 );
+
+store.subscribe(() => {
+  if (store.getState().status !== 'wait' && store.getState().status !== 'running') {
+    setTimeout(() => {
+      store.dispatch({
+        type: 'RESET',
+      });
+    }, 7000);
+  }
+});
