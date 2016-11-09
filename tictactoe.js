@@ -2,41 +2,9 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { createStore } = require('redux');
 const { Provider, connect } = require('react-redux');
-const { chooseBestMove, chooseSomeMove, isFinished, gameStatusMessage } = require('./game.js');
+const { chooseBestMove, chooseSomeMove, isFinished, gameStatusMessage, getStateAfterMove, makeMove } = require('./game.js');
 
 const defaultState = { board: '_________'.split(''), player: '?', status: 'wait', level: '' };
-
-const getStateAfterMove = (state, index) => {
-  return Object.assign({}, state, {
-    board: [
-      ...state.board.slice(0, index),
-      state.player,
-      ...state.board.slice(index + 1)
-    ],
-    player: state.player === 'X' ? 'O' : 'X'
-  });
-}
-
-const makeMove = (state) => {
-  let nextMove;
-  if (state.level === 'Profi') {
-    nextMove = chooseBestMove(state.board, state.player);
-  } else {
-    const bestMoveChance = 70;
-    if (Math.random() * 100 <= bestMoveChance) {
-      nextMove = chooseBestMove(state.board, state.player);
-    } else {
-      nextMove = chooseSomeMove(state.board, state.player);
-    }
-  }
-  const stateAfterBothMoves = getStateAfterMove(state, nextMove);
-  if (isFinished(stateAfterBothMoves.board) === false) {
-    return stateAfterBothMoves;
-  } else {
-    const newStatus = gameStatusMessage(isFinished(stateAfterBothMoves.board));
-    return Object.assign({}, stateAfterBothMoves, { status: newStatus })
-  }
-}
 
 const tictactoe = (state = defaultState, action) => {
   switch (action.type) {
@@ -93,7 +61,7 @@ const PlayerSymbol = ({player, status, onSymbolClick}) => {
   } else {
     if (status === "running") {
       return (
-        <p>It's {player}turn </p>
+        <p>It's {player} turn </p>
       )
     } else {
       return (

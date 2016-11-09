@@ -39,7 +39,7 @@ function isFinished(board) {
 function gameStatusMessage(status) {
   let message;
   if (status === 'draw') {
-    message = "It's draw!";
+    message = "It's a draw!";
   } else {
     message = status + ' won!';
   }
@@ -112,4 +112,36 @@ function chooseSomeMove(board, player) {
   }
 }
 
-module.exports = { findEmpty, isFinished, calculateScore, minMax, gameStatusMessage, chooseBestMove, chooseSomeMove };
+const getStateAfterMove = (state, index) => {
+  return Object.assign({}, state, {
+    board: [
+      ...state.board.slice(0, index),
+      state.player,
+      ...state.board.slice(index + 1)
+    ],
+    player: state.player === 'X' ? 'O' : 'X'
+  });
+}
+
+const makeMove = (state) => {
+  let nextMove;
+  if (state.level === 'Profi') {
+    nextMove = chooseBestMove(state.board, state.player);
+  } else {
+    const bestMoveChance = 70;
+    if (Math.random() * 100 <= bestMoveChance) {
+      nextMove = chooseBestMove(state.board, state.player);
+    } else {
+      nextMove = chooseSomeMove(state.board, state.player);
+    }
+  }
+  const stateAfterBothMoves = getStateAfterMove(state, nextMove);
+  if (isFinished(stateAfterBothMoves.board) === false) {
+    return stateAfterBothMoves;
+  } else {
+    const newStatus = gameStatusMessage(isFinished(stateAfterBothMoves.board));
+    return Object.assign({}, stateAfterBothMoves, { status: newStatus })
+  }
+}
+
+module.exports = { chooseBestMove, chooseSomeMove, isFinished, gameStatusMessage, getStateAfterMove, makeMove };
