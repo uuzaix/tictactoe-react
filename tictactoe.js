@@ -67,7 +67,7 @@ const PlayerSymbol = ({player, status, onSymbolClick}) => {
       )
     } else {
       return (
-        <p>{status}</p>
+        <p className='status'>{status}</p>
       )
     }
   }
@@ -112,7 +112,7 @@ const LevelChooser = connect(
 )(Level);
 
 const Cell = ({id, content, onCellClick}) => (
-  <div className='cell' id={id} onClick={() =>
+  <div className='cell' id={'cell-'+ id} onClick={() =>
     onCellClick(id)}>
     {content}
   </div>

@@ -1,9 +1,10 @@
 html, body {
   height: 100%;
   width: 100%;
-  font-size: 24px;
+  font-size: 28px;
   margin:0;
   background-color: #00313D;
+  font-family: 'Muli', sans-serif;
 }
 
 body {
@@ -20,41 +21,42 @@ body {
   text-align: center;
 }
 
-/*.board {
-  display: inline-block;
-}*/
-
 .first-row, .second-row, .third-row {
   display: flex;
   justify-content: center;
   flex-direction: row;
 }
 
-
 .cell {
-  border: 1px solid #C0C4C7;
+  border: 2px solid #C0C4C7;
   width: 80px;
   height: 80px;
   text-align: center;
   line-height: 80px;
+  font-size: 40px;
 }
+
 .first-row .cell {
   border-top: 0;
 }
+
 .third-row .cell {
   border-bottom: 0;
 }
 
-/*#cell-0, #cell-3, #cell-6 {
+#cell-0, #cell-3, #cell-6 {
   border-left: 0;
 }
 
 #cell-2, #cell-5, #cell-8 {
   border-right: 0;
-}*/
+}
 
 a {
   text-decoration: none;
   color: #0078D1;
+}
 
+.status {
+  color: #0078D1;
 }
