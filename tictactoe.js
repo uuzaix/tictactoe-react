@@ -4,20 +4,19 @@ const { createStore } = require('redux');
 const { Provider, connect } = require('react-redux');
 const { chooseBestMove, chooseSomeMove, isFinished, gameStatusMessage, getStateAfterMove, makeMove } = require('./game.js');
 
-const defaultState = { board: '_________'.split(''), player: '?', status: 'wait', level: '' };
+const defaultState = { board: '         '.split(''), player: '?', status: 'wait', level: '' };
 
 const tictactoe = (state = defaultState, action) => {
   switch (action.type) {
     case 'MOVE':
-      if (state.player !== '?' && state.status === 'running' && state.level !== '' && state.board[action.index] === '_') {
+      if (state.player !== '?' && state.status === 'running' && state.level !== '' && state.board[action.index] === ' ') {
         const stateAfterUserMove = getStateAfterMove(state, action.index);
         if (isFinished(stateAfterUserMove.board) === false) {
           return makeMove(stateAfterUserMove);
         } else {
           const newStatus = gameStatusMessage(isFinished(stateAfterUserMove.board));
-          return Object.assign({}, stateAfterUserMove, { status: newStatus })
+          return Object.assign({}, stateAfterUserMove, { status: newStatus });
         }
-
       } else {
         return state;
       }
@@ -124,10 +123,16 @@ const Board = ({board, onCellClick}) => {
     <Cell key={index} id={index} content={cell} onCellClick={onCellClick} />
   );
   return (
-    <div>
-      {cells.slice(0, 3)} <br />
-      {cells.slice(3, 6)} <br />
-      {cells.slice(6, 9)}
+    <div className='board'>
+      <div className='first-row'>
+       {cells.slice(0, 3)}
+      </div>
+      <div className='second-row'>
+        {cells.slice(3, 6)}
+      </div>
+      <div className='third-row'>
+        {cells.slice(6, 9)}
+      </div>
     </div>
   );
 };
