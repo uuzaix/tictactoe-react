@@ -2,7 +2,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { createStore } = require('redux');
 const { Provider, connect } = require('react-redux');
-const { chooseBestMove, chooseSomeMove, isFinished, gameStatusMessage, getStateAfterMove, makeMove } = require('./game.js');
+const { isFinished, gameStatusMessage, getStateAfterMove, chooseResponseMove } = require('./game.js');
 
 const defaultState = { board: '         '.split(''), player: '?', status: 'wait', level: '' };
 
@@ -10,12 +10,18 @@ const tictactoe = (state = defaultState, action) => {
   switch (action.type) {
     case 'MOVE':
       if (state.player !== '?' && state.status === 'running' && state.level !== '' && state.board[action.index] === ' ') {
-        const stateAfterUserMove = getStateAfterMove(state, action.index);
+        const stateAfterUserMove = Object.assign({}, state, getStateAfterMove(state.board, state.player, action.index)
+        );
         if (isFinished(stateAfterUserMove.board) === false) {
-          return makeMove(stateAfterUserMove);
+          const nextMove = chooseResponseMove(stateAfterUserMove.board, stateAfterUserMove.player, stateAfterUserMove.level);
+          const stateAfterBothMoves = Object.assign({}, stateAfterUserMove, getStateAfterMove(stateAfterUserMove.board, stateAfterUserMove.player, nextMove));
+          if (isFinished(stateAfterBothMoves.board) === false) {
+            return stateAfterBothMoves;
+          } else {
+            return Object.assign({}, stateAfterBothMoves, { status: gameStatusMessage(stateAfterBothMoves.board) })
+          }
         } else {
-          const newStatus = gameStatusMessage(isFinished(stateAfterUserMove.board));
-          return Object.assign({}, stateAfterUserMove, { status: newStatus });
+          return Object.assign({}, stateAfterUserMove, { status: gameStatusMessage(stateAfterUserMove.board) });
         }
       } else {
         return state;
@@ -112,7 +118,7 @@ const LevelChooser = connect(
 )(Level);
 
 const Cell = ({id, content, onCellClick}) => (
-  <div className='cell' id={'cell-'+ id} onClick={() =>
+  <div className='cell' id={'cell-' + id} onClick={() =>
     onCellClick(id)}>
     {content}
   </div>
@@ -125,7 +131,7 @@ const Board = ({board, onCellClick}) => {
   return (
     <div className='board'>
       <div className='first-row'>
-       {cells.slice(0, 3)}
+        {cells.slice(0, 3)}
       </div>
       <div className='second-row'>
         {cells.slice(3, 6)}

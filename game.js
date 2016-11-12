@@ -36,7 +36,8 @@ function isFinished(board) {
   return false;
 };
 
-function gameStatusMessage(status) {
+function gameStatusMessage(board) {
+  const status = isFinished(board);
   let message;
   if (status === 'draw') {
     message = "It's a draw!";
@@ -98,12 +99,12 @@ function findAllMoves(board, player) {
   return _.sortBy(availableMove, 'minMaxValue');
 }
 
-function chooseBestMove(board, player) {
+function findBestMove(board, player) {
   const sortedMoves = findAllMoves(board, player);
   return _.first(sortedMoves).cell; 
 }
 
-function chooseSomeMove(board, player) {
+function findSomeMove(board, player) {
   const sortedMoves = findAllMoves(board, player);
   if (sortedMoves.length >= 2) {
     return sortedMoves[1].cell;
@@ -112,36 +113,30 @@ function chooseSomeMove(board, player) {
   }
 }
 
-const getStateAfterMove = (state, index) => {
-  return Object.assign({}, state, {
+const getStateAfterMove = (board, player, index) => {
+  return Object.assign({}, {
     board: [
-      ...state.board.slice(0, index),
-      state.player,
-      ...state.board.slice(index + 1)
+      ...board.slice(0, index),
+      player,
+      ...board.slice(index + 1)
     ],
-    player: state.player === 'X' ? 'O' : 'X'
+    player: player === 'X' ? 'O' : 'X'
   });
 }
 
-const makeMove = (state) => {
+const chooseResponseMove = (board, player, level) => {
   let nextMove;
-  if (state.level === 'Profi') {
-    nextMove = chooseBestMove(state.board, state.player);
+  if (level === 'Profi') {
+    nextMove = findBestMove(board, player);
   } else {
     const bestMoveChance = 70;
     if (Math.random() * 100 <= bestMoveChance) {
-      nextMove = chooseBestMove(state.board, state.player);
+      nextMove = findBestMove(board, player);
     } else {
-      nextMove = chooseSomeMove(state.board, state.player);
+      nextMove = findSomeMove(board, player);
     }
   }
-  const stateAfterBothMoves = getStateAfterMove(state, nextMove);
-  if (isFinished(stateAfterBothMoves.board) === false) {
-    return stateAfterBothMoves;
-  } else {
-    const newStatus = gameStatusMessage(isFinished(stateAfterBothMoves.board));
-    return Object.assign({}, stateAfterBothMoves, { status: newStatus })
-  }
+  return nextMove;
 }
 
-module.exports = { chooseBestMove, chooseSomeMove, isFinished, gameStatusMessage, getStateAfterMove, makeMove };
+module.exports = { isFinished, gameStatusMessage, getStateAfterMove, chooseResponseMove };
