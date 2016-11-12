@@ -60,3 +60,15 @@ a {
 .status {
   color: #0078D1;
 }
+
+#reset {
+  background-color: #00313D;
+  color: #0078D1;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+#reset:focus {
+  outline: none;
+}

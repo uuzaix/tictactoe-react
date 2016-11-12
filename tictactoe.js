@@ -48,7 +48,8 @@ const store = createStore(tictactoe, window.__REDUX_DEVTOOLS_EXTENSION__ && wind
 const mapStateToSymProps = (state) => {
   return {
     player: state.player,
-    status: state.status
+    status: state.status,
+    level: state.level
   }
 };
 
@@ -60,8 +61,12 @@ const mapDispatchToSymProps = (dispatch) => {
   }
 };
 
-const PlayerSymbol = ({player, status, onSymbolClick}) => {
-  if (player === '?') {
+const PlayerSymbol = ({player, status, level, onSymbolClick}) => {
+  if (level === '') {
+    return (
+      <p>Are you ready?</p>
+    )
+  } else if (player === '?' && level !== '') {
     return (
       <p>Choose your symbol
         <a href='#' onClick={() => onSymbolClick('X')}> X </a> or
@@ -162,14 +167,38 @@ const Tictactoe = connect(
   mapDispatchToProps
 )(Board);
 
+const mapStateToResetProps = (state) => {
+  return {
+  }
+};
+const mapDispatchToResetProps = (dispatch) => {
+  return {
+    onResetClick: () => {
+      dispatch({ type: 'RESET' })
+    }
+  }
+};
+
+const ResetButton = ({onResetClick}) => {
+  return (
+    <button id='reset' onClick={() =>
+    onResetClick()}>Reset</button>
+  )
+};
+const Reset = connect(
+  mapStateToResetProps, 
+  mapDispatchToResetProps
+)(ResetButton);
+
 
 const App = () => (
   <div>
     <SymbolChooser />
     <Tictactoe />
     <LevelChooser />
+    <Reset />
   </div>
-)
+);
 
 ReactDOM.render(
   <Provider store={store}>
@@ -184,6 +213,6 @@ store.subscribe(() => {
       store.dispatch({
         type: 'RESET',
       });
-    }, 7000);
+    }, 3500);
   }
 });
