@@ -122,16 +122,17 @@ const LevelChooser = connect(
   mapDispatchToLevelProps
 )(Level);
 
-const Cell = ({id, content, onCellClick}) => (
-  <div className='cell' id={'cell-' + id} onClick={() =>
-    onCellClick(id)}>
+const Cell = ({id, content, status, onCellClick}) => (
+  <div id={'cell-' + id} onClick={() =>
+    onCellClick(id)} className={(content===' ' && status==='running') ? 'cell empty' : 'cell'}>
+    
     {content}
   </div>
 );
 
-const Board = ({board, onCellClick}) => {
+const Board = ({board, status, onCellClick}) => {
   const cells = board.map((cell, index) =>
-    <Cell key={index} id={index} content={cell} onCellClick={onCellClick} />
+    <Cell key={index} id={index} content={cell} status={status} onCellClick={onCellClick} />
   );
   return (
     <div className='board'>
@@ -150,7 +151,8 @@ const Board = ({board, onCellClick}) => {
 
 const mapStateToProps = (state) => {
   return {
-    board: state.board
+    board: state.board,
+    status: state.status
   }
 };
 

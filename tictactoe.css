@@ -34,26 +34,24 @@ body {
   text-align: center;
   line-height: 80px;
   font-size: 40px;
-  transition-duration: 0.4s;
 }
 
-.cell:active {
-  background-color: #003F4F;
+#cell-2:hover, #cell-5:hover, #cell-8:hover {
+  border-right: 0;
 }
-
-.first-row .cell {
+.first-row .cell, .first-row .cell.empty:hover {
   border-top: 0;
 }
 
-.third-row .cell {
+.third-row .cell, .third-row .cell.empty:hover {
   border-bottom: 0;
 }
 
-#cell-0, #cell-3, #cell-6 {
+#cell-0, #cell-3, #cell-6, #cell-0:hover, #cell-3:hover, #cell-6:hover {
   border-left: 0;
 }
 
-#cell-2, #cell-5, #cell-8 {
+#cell-2, #cell-5, #cell-8, #cell-2:hover, #cell-5:hover, #cell-8:hover  {
   border-right: 0;
 }
 
@@ -85,4 +83,13 @@ a:active {
 #reset:active {
   color: #0BDEC7;
   font-size: 20px;
+}
+
+.cell.empty {
+  cursor: pointer;
+}
+
+.cell.empty:hover {
+  border: 2px solid #0078D1;
+  background-color: #003B4A; 
 }
