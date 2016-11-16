@@ -3,6 +3,7 @@ const ReactDOM = require('react-dom');
 const { createStore } = require('redux');
 const { Provider, connect } = require('react-redux');
 const { isFinished, gameStatusMessage, getStateAfterMove, chooseResponseMove } = require('./game.js');
+const firebase = require('./app.js');
 
 const defaultState = { board: '         '.split(''), player: '?', status: 'wait', level: '' };
 
