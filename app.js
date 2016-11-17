@@ -1,34 +1,24 @@
-// import firebase from 'firebase';
-
 // Initialize Firebase
 (function () {
   var config = {
-    apiKey: "xxx",
-    authDomain: "xxx",
-    databaseURL: "xxx",
-    storageBucket: "xxx",
-    messagingSenderId: "xxx"
+    apiKey: "AIzaSyD7CHMJC4RlbI8MNaplwb5_D3mUuBXo07s",
+    authDomain: "tictactoe-c2dbd.firebaseapp.com",
+    databaseURL: "https://tictactoe-c2dbd.firebaseio.com",
+    storageBucket: "tictactoe-c2dbd.appspot.com",
+    messagingSenderId: "664947495401"
   };
   firebase.initializeApp(config);
 
-  const login = document.getElementById('login');
-
-  const dbRefObject = firebase.database().ref().child('login');
+  //const dbRefObject = firebase.database().ref().child('login');
 
   const btnLogin = document.getElementById('login');
 
   btnLogin.addEventListener('click', e => {
     const provider = new firebase.auth.GoogleAuthProvider();
     const auth = firebase.auth();
-    auth.signInWithRedirect(provider);
-    auth.getRedirectResult().then(function (result) {
-      if (result.credential) {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        var token = result.credential.accessToken;
-        console.log("token", token);
-        // ...
-      }
-      // The signed-in user info.
+    auth.signInWithPopup(provider).then(function (result) {
+      var token = result.credential.accessToken;
+      console.log("token", token);
       var user = result.user;
       console.log("user", user);
     }).catch(function (error) {
@@ -42,11 +32,29 @@
       var credential = error.credential;
       // ...
     });
-
+  });
+  const btnLogout = document.getElementById('logout');
+  btnLogout.addEventListener('click', e => {
+    firebase.auth().signOut().then(function() {
+  // Sign-out successful.
+  console.log('signout is successful');
+}, function(error) {
+  // An error happened.
+  console.log('logout error', error);
+});
   })
 
-
-
+  firebase.auth().onAuthStateChanged(firebaseUser => {
+    if(firebaseUser) {
+      console.log(firebaseUser);
+      btnLogout.classList.remove('hide');
+      btnLogin.classList.add('hide');
+    } else {
+      console.log('not signed in');
+      btnLogin.classList.remove('hide');
+      btnLogout.classList.add('hide');
+    }
+  });
 
 
 })();
