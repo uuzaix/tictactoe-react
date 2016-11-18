@@ -1,3 +1,5 @@
+const firebase = require('firebase');
+
 // Initialize Firebase
 (function () {
   var config = {

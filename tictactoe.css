@@ -93,3 +93,7 @@ a:active {
   border: 2px solid #0078D1;
   background-color: #003B4A; 
 }
+
+.hide {
+  display: none;
+}
