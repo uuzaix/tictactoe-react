@@ -1,9 +1,11 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
-const { createStore } = require('redux');
+const { createStore, applyMiddleware } = require('redux');
 const { Provider, connect } = require('react-redux');
+const ReduxThunk = require('redux-thunk').default;
 const { isFinished, gameStatusMessage, getStateAfterMove, chooseResponseMove } = require('./game.js');
-const firebase = require('./app.js');
+const firebase = require('./firebase.js');
+const { writeUserState, login } = require('./firebase.js')
 
 const defaultState = { board: '         '.split(''), player: '?', status: 'wait', level: '' };
 
@@ -36,6 +38,9 @@ const tictactoe = (state = defaultState, action) => {
 
     case 'RESET':
       return defaultState;
+    
+    case 'RECEIVE_STATE':
+      return action.payload;
 
     default:
       return state;
@@ -44,7 +49,7 @@ const tictactoe = (state = defaultState, action) => {
 
 module.exports = { tictactoe };
 
-const store = createStore(tictactoe, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+const store = createStore(tictactoe, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(ReduxThunk));
 
 const mapStateToSymProps = (state) => {
   return {
@@ -174,6 +179,7 @@ const mapStateToResetProps = (state) => {
   return {
   }
 };
+
 const mapDispatchToResetProps = (dispatch) => {
   return {
     onResetClick: () => {
@@ -188,14 +194,55 @@ const ResetButton = ({onResetClick}) => {
     onResetClick()}>Reset</button>
   )
 };
+
 const Reset = connect(
   mapStateToResetProps, 
   mapDispatchToResetProps
 )(ResetButton);
 
+////////////////////////
+
+const loginUser = () => {
+  return function foo(dispatch) {
+    return login().then(
+      state => dispatch(recieveState(state))
+    );
+  };
+};
+
+const recieveState = (state) => {
+  return {type: 'RECEIVE_STATE', payload: state}
+}
+
+const mapStateToLoginProps = (state) => {
+  return {
+  }
+};
+
+const mapDispatchToLoginProps = (dispatch) => {
+  return {
+    onLoginClick: () => {
+      dispatch(loginUser())
+    }
+  }
+};
+
+const LoginButton = ({onLoginClick}) => {
+  return (
+    <button id='login' onClick={() =>
+    onLoginClick()}>Login</button>
+  )
+};
+const Login = connect(
+  mapStateToLoginProps, 
+  mapDispatchToLoginProps
+)(LoginButton);
+
+////////////////////////////
 
 const App = () => (
   <div>
+    <Login />
     <SymbolChooser />
     <Tictactoe />
     <LevelChooser />
