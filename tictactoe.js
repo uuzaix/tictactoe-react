@@ -80,7 +80,7 @@ const PlayerSymbol = ({player, status, level, onSymbolClick}) => {
   } else {
     if (status === "running") {
       return (
-        <p>It's {player} turn </p>
+        <p>{"It's "}{player} turn </p>
       )
     } else {
       return (
@@ -165,7 +165,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onCellClick: (id) => {
-      dispatch({ type: 'MOVE', index: id })
+      dispatch({ type: 'MOVE', index: id });
+      writeUserState(store.getState())
     }
   }
 };
@@ -203,7 +204,7 @@ const Reset = connect(
 ////////////////////////
 
 const loginUser = () => {
-  return function foo(dispatch) {
+  return dispatch => {
     return login().then(
       state => dispatch(recieveState(state))
     );
