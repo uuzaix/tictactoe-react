@@ -11,37 +11,30 @@ const defaultState = { board: '         '.split(''), player: '?', status: 'wait'
 
 const tictactoe = (state = defaultState, action) => {
   switch (action.type) {
-    case 'MOVE_FOE':
+    case 'MOVE_USER':
       if (state.player !== '?' && state.status === 'running' && state.level !== '' && state.board[action.index] === ' ') {
-        return Object.assign({}, state, getStateAfterMove(state.board, state.player, action.index)
-        );
-        // if (isFinished(stateAfterUserMove.board) === false) {
-        //   const nextMove = chooseResponseMove(stateAfterUserMove.board, stateAfterUserMove.player, stateAfterUserMove.level);
-        //   const stateAfterBothMoves = Object.assign({}, stateAfterUserMove, getStateAfterMove(stateAfterUserMove.board, stateAfterUserMove.player, nextMove));
-        //   if (isFinished(stateAfterBothMoves.board) === false) {
-        //     return stateAfterBothMoves;
-        //   } else {
-        //     return Object.assign({}, stateAfterBothMoves, { status: gameStatusMessage(stateAfterBothMoves.board) })
-        //   }
-        // } else {
-        //   return Object.assign({}, stateAfterUserMove, { status: gameStatusMessage(stateAfterUserMove.board) });
-        // }
+        const stateAfterUserMove = Object.assign({}, state, getStateAfterMove(state.board, state.player, action.index), { status: 'delay' });
+        if (isFinished(stateAfterUserMove.board)) {
+          return Object.assign({}, stateAfterUserMove, { status: gameStatusMessage(stateAfterUserMove.board) });
+        } else {
+          return stateAfterUserMove;
+        }
       } else {
         return state;
       }
 
-      case 'MOVE_SELF':
-        if (isFinished(state.board) === false) {
-          const nextMove = chooseResponseMove(state.board, state.player, state.level);
-          const stateAfterBothMoves = Object.assign({}, state, getStateAfterMove(state.board, state.player, nextMove));
-          if (isFinished(stateAfterBothMoves.board) === false) {
-            return stateAfterBothMoves;
-          } else {
-            return Object.assign({}, stateAfterBothMoves, { status: gameStatusMessage(stateAfterBothMoves.board) })
-          }
+    case 'MOVE_SELF':
+      if (state.player !== '?' && state.status === 'delay' && state.level !== '') {
+        const nextMove = chooseResponseMove(state.board, state.player, state.level);
+        const stateAfterBothMoves = Object.assign({}, state, getStateAfterMove(state.board, state.player, nextMove), { status: 'running' });
+        if (!isFinished(stateAfterBothMoves.board)) {
+          return stateAfterBothMoves;
         } else {
-          return Object.assign({}, state, { status: gameStatusMessage(state.board) });
+          return Object.assign({}, stateAfterBothMoves, { status: gameStatusMessage(stateAfterBothMoves.board) })
         }
+      } else {
+        return state;
+      }
 
     case 'CHOOSE_SYMBOL':
       return Object.assign({}, state, { player: action.symbol, status: 'running' });
@@ -91,7 +84,7 @@ const PlayerSymbol = ({player, status, level, onSymbolClick}) => {
         <a href='#' onClick={() => onSymbolClick('X')}> X </a> or
         <a href='#' onClick={() => onSymbolClick('O')}> O </a></p>)
   } else {
-    if (status === "running") {
+    if (status === "running" || status === 'delay') {
       return (
         <p>{"It's "}{player} turn </p>
       )
@@ -176,7 +169,7 @@ const mapStateToProps = (state) => {
 
 const moveAsync = (id) => {
   return dispatch => {
-    dispatch({ type: 'MOVE_FOE', index: id });
+    dispatch({ type: 'MOVE_USER', index: id });
     setTimeout(() => {
       dispatch({ type: 'MOVE_SELF' })
     }, 2000);
@@ -304,7 +297,7 @@ ReactDOM.render(
 
 
 store.subscribe(() => {
-  if (store.getState().status !== 'wait' && store.getState().status !== 'running') {
+  if (store.getState().status !== 'wait' && store.getState().status !== 'running' && store.getState().status !== 'delay') {
     setTimeout(() => {
       store.dispatch({
         type: 'RESET',
