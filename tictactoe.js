@@ -5,30 +5,43 @@ const { Provider, connect } = require('react-redux');
 const ReduxThunk = require('redux-thunk').default;
 const { isFinished, gameStatusMessage, getStateAfterMove, chooseResponseMove } = require('./game.js');
 const firebase = require('./firebase.js');
-const { writeUserState, login } = require('./firebase.js')
+const { writeUserState, login, isAuth, initAuth } = require('./firebase.js')
 
 const defaultState = { board: '         '.split(''), player: '?', status: 'wait', level: '' };
 
 const tictactoe = (state = defaultState, action) => {
   switch (action.type) {
-    case 'MOVE':
+    case 'MOVE_FOE':
       if (state.player !== '?' && state.status === 'running' && state.level !== '' && state.board[action.index] === ' ') {
-        const stateAfterUserMove = Object.assign({}, state, getStateAfterMove(state.board, state.player, action.index)
+        return Object.assign({}, state, getStateAfterMove(state.board, state.player, action.index)
         );
-        if (isFinished(stateAfterUserMove.board) === false) {
-          const nextMove = chooseResponseMove(stateAfterUserMove.board, stateAfterUserMove.player, stateAfterUserMove.level);
-          const stateAfterBothMoves = Object.assign({}, stateAfterUserMove, getStateAfterMove(stateAfterUserMove.board, stateAfterUserMove.player, nextMove));
+        // if (isFinished(stateAfterUserMove.board) === false) {
+        //   const nextMove = chooseResponseMove(stateAfterUserMove.board, stateAfterUserMove.player, stateAfterUserMove.level);
+        //   const stateAfterBothMoves = Object.assign({}, stateAfterUserMove, getStateAfterMove(stateAfterUserMove.board, stateAfterUserMove.player, nextMove));
+        //   if (isFinished(stateAfterBothMoves.board) === false) {
+        //     return stateAfterBothMoves;
+        //   } else {
+        //     return Object.assign({}, stateAfterBothMoves, { status: gameStatusMessage(stateAfterBothMoves.board) })
+        //   }
+        // } else {
+        //   return Object.assign({}, stateAfterUserMove, { status: gameStatusMessage(stateAfterUserMove.board) });
+        // }
+      } else {
+        return state;
+      }
+
+      case 'MOVE_SELF':
+        if (isFinished(state.board) === false) {
+          const nextMove = chooseResponseMove(state.board, state.player, state.level);
+          const stateAfterBothMoves = Object.assign({}, state, getStateAfterMove(state.board, state.player, nextMove));
           if (isFinished(stateAfterBothMoves.board) === false) {
             return stateAfterBothMoves;
           } else {
             return Object.assign({}, stateAfterBothMoves, { status: gameStatusMessage(stateAfterBothMoves.board) })
           }
         } else {
-          return Object.assign({}, stateAfterUserMove, { status: gameStatusMessage(stateAfterUserMove.board) });
+          return Object.assign({}, state, { status: gameStatusMessage(state.board) });
         }
-      } else {
-        return state;
-      }
 
     case 'CHOOSE_SYMBOL':
       return Object.assign({}, state, { player: action.symbol, status: 'running' });
@@ -38,7 +51,7 @@ const tictactoe = (state = defaultState, action) => {
 
     case 'RESET':
       return defaultState;
-    
+
     case 'RECEIVE_STATE':
       return action.payload;
 
@@ -130,8 +143,7 @@ const LevelChooser = connect(
 
 const Cell = ({id, content, status, onCellClick}) => (
   <div id={'cell-' + id} onClick={() =>
-    onCellClick(id)} className={(content===' ' && status==='running') ? 'cell empty' : 'cell'}>
-    
+    onCellClick(id)} className={(content === ' ' && status === 'running') ? 'cell empty' : 'cell'}>
     {content}
   </div>
 );
@@ -162,14 +174,32 @@ const mapStateToProps = (state) => {
   }
 };
 
+const moveAsync = (id) => {
+  return dispatch => {
+    dispatch({ type: 'MOVE_FOE', index: id });
+    setTimeout(() => {
+      dispatch({ type: 'MOVE_SELF' })
+    }, 2000);
+  }
+};
+
 const mapDispatchToProps = (dispatch) => {
   return {
     onCellClick: (id) => {
-      dispatch({ type: 'MOVE', index: id });
+      dispatch(moveAsync(id));
       writeUserState(store.getState())
     }
   }
 };
+
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     onCellClick: (id) => {
+//       dispatch({ type: 'MOVE', index: id });
+//       writeUserState(store.getState())
+//     }
+//   }
+// };
 
 const Tictactoe = connect(
   mapStateToProps,
@@ -192,12 +222,12 @@ const mapDispatchToResetProps = (dispatch) => {
 const ResetButton = ({onResetClick}) => {
   return (
     <button id='reset' onClick={() =>
-    onResetClick()}>Reset</button>
+      onResetClick()}>Reset</button>
   )
 };
 
 const Reset = connect(
-  mapStateToResetProps, 
+  mapStateToResetProps,
   mapDispatchToResetProps
 )(ResetButton);
 
@@ -212,7 +242,7 @@ const loginUser = () => {
 };
 
 const recieveState = (state) => {
-  return {type: 'RECEIVE_STATE', payload: state}
+  return { type: 'RECEIVE_STATE', payload: state }
 }
 
 const mapStateToLoginProps = (state) => {
@@ -231,11 +261,11 @@ const mapDispatchToLoginProps = (dispatch) => {
 const LoginButton = ({onLoginClick}) => {
   return (
     <button id='login' onClick={() =>
-    onLoginClick()}>Login</button>
+      onLoginClick()}>Login</button>
   )
 };
 const Login = connect(
-  mapStateToLoginProps, 
+  mapStateToLoginProps,
   mapDispatchToLoginProps
 )(LoginButton);
 
@@ -257,6 +287,21 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('game')
 );
+//draft version for firebase auth 
+// function render() {
+//   ReactDOM.render(
+//     <Provider store={store}>
+//       <App />
+//     </Provider>,
+//     document.getElementById('game')
+//   );
+// }
+
+
+// initAuth(store.dispatch);
+// render();
+
+
 
 store.subscribe(() => {
   if (store.getState().status !== 'wait' && store.getState().status !== 'running') {
