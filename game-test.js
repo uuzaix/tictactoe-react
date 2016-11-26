@@ -1,78 +1,78 @@
 const expect = require('expect');
 
-const { findEmpty, isFinished, makeMove, calculateScore, minMax } = require('./game.js');
+const { findEmpty, isFinished, findBestMove, calculateScore, minMax } = require('./game.js');
 
 const testfindEmpty = () => {
-  let board = ['_', '_', '_', '_', '_', '_', '_', '_', '_'];
+  let board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
   expect(findEmpty(board)).toEqual([0,1,2,3,4,5,6,7,8]);
-  board = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', '_'];
+  board = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', ' '];
   expect(findEmpty(board)).toEqual([8]);
   board = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'O'];
   expect(findEmpty(board)).toEqual([]);
 }
 
 const testIsFinished = () => {
-  let board = ['_', '_', '_', '_', '_', '_', '_', '_', '_'];
+  let board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
   expect(isFinished(board)).toEqual(false);
-  board = ['_', '_', '_', 'X', 'X', 'X', '_', '_', '_'];
+  board = [' ', ' ', ' ', 'X', 'X', 'X', ' ', ' ', ' '];
   expect(isFinished(board)).toEqual('X');
   board = ['X', 'X', 'O', 'O', 'O', 'X', 'X', 'O', 'X'];
   expect(isFinished(board)).toEqual('draw');
-  board = ['_', 'O', '_', '_', 'O', '_', '_', 'O', '_'];
+  board = [' ', 'O', ' ', ' ', 'O', ' ', ' ', 'O', ' '];
   expect(isFinished(board)).toEqual('O');
-  board = ['_', '_', 'X', '_', 'X', '_', 'X', '_', '_'];
+  board = [' ', ' ', 'X', ' ', 'X', ' ', 'X', ' ', ' '];
   expect(isFinished(board)).toEqual('X');
 }
 
 const testCalculateScore = () => {
-  let board = ['X', 'X', 'X', '_', 'O', 'O', '_', '_', '_'];
+  let board = ['X', 'X', 'X', ' ', 'O', 'O', ' ', ' ', ' '];
   let player = 'X';
   expect(calculateScore(board, player)).toEqual(-17); //X won
   board = ['X', 'X', 'O', 'O', 'O', 'X', 'X', 'O', 'X'];
   player = 'O';
   expect(calculateScore(board, player)).toEqual(0); //draw
-  board = ['O', 'X', 'O', 'O', 'X', 'X', 'O', 'X', '_'];
+  board = ['O', 'X', 'O', 'O', 'X', 'X', 'O', 'X', ' '];
   player = 'X';
   expect(calculateScore(board, player)).toEqual(16); //O won
 }
 
 const testMinMax = () => {
-  let board = ['X', 'X', 'X', '_', 'O', 'O', '_', '_', '_'];
+  let board = ['X', 'X', 'X', ' ', 'O', 'O', ' ', ' ', ' '];
   let player = 'X';
   expect(minMax(board, player, player)).toEqual(-17); //X won
   board = ['X', 'X', 'O', 'O', 'O', 'X', 'X', 'O', 'X'];
   player = 'O';
   expect(minMax(board, player, player)).toEqual(0); //draw
-  board = ['O', 'X', 'O', 'O', 'X', 'X', 'O', 'X', '_'];
+  board = ['O', 'X', 'O', 'O', 'X', 'X', 'O', 'X', ' '];
   player = 'X';
   expect(minMax(board, player, player)).toEqual(16); //O won
-  board = ['O', 'X', 'O', '_', 'X', 'X', 'O', 'X', '_'];
+  board = ['O', 'X', 'O', ' ', 'X', 'X', 'O', 'X', ' '];
   player = 'O';
   expect(minMax(board, player, player)).toEqual(16);
-  board = ['O', 'X', 'O', '_', 'X', '_', 'X', 'O', '_'];
+  board = ['O', 'X', 'O', ' ', 'X', ' ', 'X', 'O', ' '];
   player = 'O';
   expect(minMax(board, player, player)).toEqual(0);
 }
 
-const testMakeMove = () => {
-  let board = ['O', 'X', 'O', '_', 'X', '_', 'X', 'O', '_'];
+const testfindBestMove = () => {
+  let board = ['O', 'X', 'O', ' ', 'X', ' ', 'X', 'O', ' '];
   let player = 'X';
-  expect(makeMove(board, player)).toEqual(3);
-  board = ['X', '_', 'O', '_', 'O', '_', 'X', '_', '_'];
+  expect(findBestMove(board, player)).toEqual(3);
+  board = ['X', ' ', 'O', ' ', 'O', ' ', 'X', ' ', ' '];
   player = 'X';
-  expect(makeMove(board, player)).toEqual(3);
-  board = ['X', '_', '_', '_', '_', '_', '_', '_', '_'];
+  expect(findBestMove(board, player)).toEqual(3);
+  board = ['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
   player = 'O';
-  expect(makeMove(board, player)).toEqual(4);
-  board = ['X', 'O', '_', 'O', 'O', 'X', 'X', '_', '_'];
+  expect(findBestMove(board, player)).toEqual(4);
+  board = ['X', 'O', ' ', 'O', 'O', 'X', 'X', ' ', ' '];
   player = 'X';
-  expect(makeMove(board, player)).toEqual(7);
+  expect(findBestMove(board, player)).toEqual(7);
 }
 
 testfindEmpty();
 testIsFinished();
 testCalculateScore();
 testMinMax();
-testMakeMove();
+testfindBestMove();
 
 console.log('tests pass');

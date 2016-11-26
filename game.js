@@ -139,4 +139,4 @@ const chooseResponseMove = (board, player, level) => {
   return nextMove;
 }
 
-module.exports = { isFinished, gameStatusMessage, getStateAfterMove, chooseResponseMove };
+module.exports = { findEmpty, calculateScore, minMax, findBestMove, isFinished, gameStatusMessage, getStateAfterMove, chooseResponseMove };
