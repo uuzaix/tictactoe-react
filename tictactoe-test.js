@@ -3,6 +3,8 @@ const expect = require('expect');
 const { tictactoe } = require('./reducer-tictactoe.js');
 const { findEmpty, isFinished } = require('./game.js');
 
+const { testGame } = require('./game-test.js');
+
 const testMoveUser = () => {
   let stateBefore = { board: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], player: 'X', status: 'running', level: 'Profi' };
   let stateAfter = { board: ['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], player: 'O', status: 'delay', level: 'Profi' };
@@ -75,4 +77,7 @@ testMoveSelf();
 testChooseSymbol();
 testChooseLevel();
 testReset();
+
+testGame();
+
 console.log('tests pass');

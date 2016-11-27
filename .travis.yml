@@ -4,5 +4,4 @@ node_js:
 - '6.5.0'
 
 script: 
-- node game-test.js
 - node tictactoe-test.js
