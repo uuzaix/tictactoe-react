@@ -2,7 +2,6 @@ const expect = require('expect');
 
 const { findEmpty, isFinished, findBestMove, calculateScore, minMax } = require('./game.js');
 
-function testGame() {
   const testfindEmpty = () => {
     let board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
     expect(findEmpty(board)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8]);
@@ -77,6 +76,3 @@ function testGame() {
   testfindBestMove();
 
   console.log('game tests pass');
-}
-
-module.exports = { testGame };
