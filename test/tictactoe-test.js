@@ -1,7 +1,7 @@
 const expect = require('expect');
 
-const { tictactoe } = require('./reducer-tictactoe.js');
-const { findEmpty, isFinished } = require('./game.js');
+const { tictactoe } = require('../src/reducer-tictactoe.js');
+const { findEmpty, isFinished } = require('../src/game.js');
 
 
 describe('tictactoe', function () {

@@ -1,5 +1,5 @@
 module.exports = {
-  entry: './tictactoe.js',
+  entry: './src/tictactoe.js',
   output: {
     path: './build',
     publicPath: '/build/',

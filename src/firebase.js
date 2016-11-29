@@ -2,11 +2,11 @@ const firebase = require('firebase');
 
 // Initialize Firebase
 var config = {
-  apiKey: "xxx",
-  authDomain: "xxx",
-  databaseURL: "xxx",
-  storageBucket: "xxx",
-  messagingSenderId: "xxx"
+  apiKey: "AIzaSyD7CHMJC4RlbI8MNaplwb5_D3mUuBXo07s",
+  authDomain: "tictactoe-c2dbd.firebaseapp.com",
+  databaseURL: "https://tictactoe-c2dbd.firebaseio.com",
+  storageBucket: "tictactoe-c2dbd.appspot.com",
+  messagingSenderId: "664947495401"
 };
 firebase.initializeApp(config);
 
@@ -21,7 +21,7 @@ function login() {
     var errorCode = error.code;
     var errorMessage = error.message;
     console.log("error", errorCode, errorMessage);
-  }); 
+  });
 }
 
 const btnLogout = document.getElementById('logout');
@@ -50,17 +50,32 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
 const database = firebase.database();
 
 function writeUserState(state) {
-  const userId = firebase.auth().currentUser.uid;
-  database.ref('users/' + userId).set({
-    state: state
-  });
+  if (isAuth()) {
+    const userId = firebase.auth().currentUser.uid;
+    database.ref('users/' + userId).set({
+      state: state
+    });
+  }
 }
 
 function getUserState(userId) {
-  return firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
+  return firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
     return snapshot.val().state;
   });
 }
 
-module.exports = { writeUserState, login }
+function isAuth() {
+  const userId = firebase.auth()
+  return userId !== null ? true : false
+}
+
+function initAuth(dispatch) {
+  if (isAuth) {
+    const userId = firebase.auth();
+    const state =  getUserState(userId.uid);
+    dispatch({ type: 'RECEIVE_STATE', payload: state });
+  }
+}
+
+module.exports = { writeUserState, login, isAuth, initAuth }
 
