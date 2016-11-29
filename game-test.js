@@ -2,16 +2,19 @@ const expect = require('expect');
 
 const { findEmpty, isFinished, findBestMove, calculateScore, minMax } = require('./game.js');
 
-  const testfindEmpty = () => {
+describe('findEmpty', function () {
+  it('should find all empty cells', function () {
     let board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
     expect(findEmpty(board)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8]);
     board = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', ' '];
     expect(findEmpty(board)).toEqual([8]);
     board = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'O'];
     expect(findEmpty(board)).toEqual([]);
-  }
+  });
+});
 
-  const testIsFinished = () => {
+describe('isFinished', function () {
+  it('should return false if game is not finished. otherwise - return winner symbol or draw', function () {
     let board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
     expect(isFinished(board)).toEqual(false);
     board = [' ', ' ', ' ', 'X', 'X', 'X', ' ', ' ', ' '];
@@ -22,9 +25,11 @@ const { findEmpty, isFinished, findBestMove, calculateScore, minMax } = require(
     expect(isFinished(board)).toEqual('O');
     board = [' ', ' ', 'X', ' ', 'X', ' ', 'X', ' ', ' '];
     expect(isFinished(board)).toEqual('X');
-  }
+  });
+});
 
-  const testCalculateScore = () => {
+describe('calculateScore', function () {
+  it('should calculate score of the player in finished game', function () {
     let board = ['X', 'X', 'X', ' ', 'O', 'O', ' ', ' ', ' '];
     let player = 'X';
     expect(calculateScore(board, player)).toEqual(-17); //X won
@@ -34,9 +39,11 @@ const { findEmpty, isFinished, findBestMove, calculateScore, minMax } = require(
     board = ['O', 'X', 'O', 'O', 'X', 'X', 'O', 'X', ' '];
     player = 'X';
     expect(calculateScore(board, player)).toEqual(16); //O won
-  }
+  });
+});
 
-  const testMinMax = () => {
+describe('minMax', function () {
+  it('should calculate minMax score for the player and current board', function () {
     let board = ['X', 'X', 'X', ' ', 'O', 'O', ' ', ' ', ' '];
     let player = 'X';
     expect(minMax(board, player, player)).toEqual(-17); //X won
@@ -52,9 +59,11 @@ const { findEmpty, isFinished, findBestMove, calculateScore, minMax } = require(
     board = ['O', 'X', 'O', ' ', 'X', ' ', 'X', 'O', ' '];
     player = 'O';
     expect(minMax(board, player, player)).toEqual(0);
-  }
+  });
+});
 
-  const testfindBestMove = () => {
+describe('findBestMove', function () {
+  it('should return index of the best move cell', function () {
     let board = ['O', 'X', 'O', ' ', 'X', ' ', 'X', 'O', ' '];
     let player = 'X';
     expect(findBestMove(board, player)).toEqual(3);
@@ -67,12 +76,5 @@ const { findEmpty, isFinished, findBestMove, calculateScore, minMax } = require(
     board = ['X', 'O', ' ', 'O', 'O', 'X', 'X', ' ', ' '];
     player = 'X';
     expect(findBestMove(board, player)).toEqual(7);
-  }
-
-  testfindEmpty();
-  testIsFinished();
-  testCalculateScore();
-  testMinMax();
-  testfindBestMove();
-
-  console.log('game tests pass');
+  });
+});
