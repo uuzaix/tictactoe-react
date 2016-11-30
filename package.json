@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register test/tests.js",
+    "test": "mocha test/tests.js",
     "build": "webpack",
     "dev": "webpack-dev-server",
     "firebase": "firebase serve"
