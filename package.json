@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha test/tests.js",
     "build": "webpack",
+    "watch": "webpack --watch",
     "dev": "webpack-dev-server",
     "firebase": "firebase serve"
   },

@@ -1,4 +1,5 @@
 module.exports = {
+  devtool: 'sourcemap',
   entry: './src/tictactoe.js',
   output: {
     path: './build',

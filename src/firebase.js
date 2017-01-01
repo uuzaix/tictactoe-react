@@ -10,7 +10,18 @@ var config = {
 };
 firebase.initializeApp(config);
 
-function login() {
+function login(providerName = 'google') {
+  switch(providerName) {
+    case 'google':
+      return loginWithGoogle();
+    case 'github':
+      return loginWithGitHub();
+    default:
+      console.error('unknown provider name', providerName);
+  }
+}
+
+function loginWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
   const auth = firebase.auth();
   return auth.signInWithPopup(provider).then(function (result) {
@@ -20,9 +31,24 @@ function login() {
     // Handle Errors here.
     var errorCode = error.code;
     var errorMessage = error.message;
-    console.log("error", errorCode, errorMessage);
+    console.log("signInWithPopup", errorCode, errorMessage);
   });
 }
+
+function loginWithGitHub() {
+  const provider = new firebase.auth.GithubAuthProvider();
+  const auth = firebase.auth();
+  return auth.signInWithPopup(provider).then(function (result) {
+    var user = result.user;
+    return getUserState(user.uid);
+  }).catch(function (error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    console.log("signInWithPopup", errorCode, errorMessage);
+  });
+}
+
 
 const btnLogout = document.getElementById('logout');
 btnLogout.addEventListener('click', e => {
@@ -37,7 +63,7 @@ btnLogout.addEventListener('click', e => {
 
 firebase.auth().onAuthStateChanged(firebaseUser => {
   if (firebaseUser) {
-    console.log(firebaseUser);
+    console.log('firebaseUser:', firebaseUser);
     btnLogout.classList.remove('hide');
     // btnLogin.classList.add('hide');
   } else {
