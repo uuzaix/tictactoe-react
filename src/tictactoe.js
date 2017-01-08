@@ -8,7 +8,16 @@ const firebase = require('./firebase.js');
 const { writeUserState, login, isAuth, initAuth } = require('./firebase.js')
 const { tictactoe } = require('./reducer-tictactoe.js');
 
-const store = createStore(tictactoe, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(ReduxThunk));
+const store = createStore(
+  tictactoe,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+  applyMiddleware(
+    ReduxThunk,
+    createLogger({
+      collapsed: true,
+      diff: true
+    }))
+);
 
 const mapStateToSymProps = (state) => {
   return {
