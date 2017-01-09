@@ -5,8 +5,8 @@ const { Provider, connect } = require('react-redux');
 const ReduxThunk = require('redux-thunk').default;
 
 const firebase = require('./firebase.js');
-const { writeUserState, login, isAuth, initAuth } = require('./firebase.js')
 const { tictactoe } = require('./reducer-tictactoe.js');
+const { initAuth } = require('./auth/actions.js');
 
 const store = createStore(
   tictactoe,
@@ -187,57 +187,11 @@ const Reset = connect(
 )(ResetButton);
 
 ////////////////////////
-
-const loginUser = (providerName) => {
-  return dispatch => {
-    return login(providerName).then(state => {
-      dispatch(recieveState(state))
-    }).catch(e => {
-      console.error("login failed", e)
-    });
-  };
-};
-
-const recieveState = (state) => {
-  return { type: 'RECEIVE_STATE', payload: state }
-}
-
-const mapStateToLoginProps = providerName => state => {
-  return {
-    providerName
-  }
-};
-
-const mapDispatchToLoginProps = providerName => dispatch => {
-  return {
-    onLoginClick: () => {
-      dispatch(loginUser(providerName))
-    }
-  }
-};
-
-const LoginButton = ({onLoginClick, providerName}) => {
-  return (
-    <button className='login' onClick={() =>
-      onLoginClick()}>Login with {providerName}</button>
-  )
-};
-
-const loginWithProvider = providerName => connect(
-  mapStateToLoginProps(providerName),
-  mapDispatchToLoginProps(providerName)
-)(LoginButton);
-
-const LoginWithGoogle = loginWithProvider('google');
-const LoginWithGitHub = loginWithProvider('github');
-
-
 ////////////////////////////
 
 const App = () => (
   <div>
-    <LoginWithGoogle />
-    <LoginWithGitHub />
+    <Header />
     <SymbolChooser />
     <Tictactoe />
     <LevelChooser />
@@ -251,20 +205,8 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('game')
 );
-//draft version for firebase auth 
-// function render() {
-//   ReactDOM.render(
-//     <Provider store={store}>
-//       <App />
-//     </Provider>,
-//     document.getElementById('game')
-//   );
-// }
 
-
-// initAuth(store.dispatch);
-// render();
-
+// store.dispatch(initAuth);
 
 
 store.subscribe(() => {
