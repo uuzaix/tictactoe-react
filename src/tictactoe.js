@@ -1,15 +1,17 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
-const { createStore, applyMiddleware } = require('redux');
+const { createStore, applyMiddleware, combineReducers } = require('redux');
 const { Provider, connect } = require('react-redux');
 const ReduxThunk = require('redux-thunk').default;
+const createLogger = require('redux-logger');
 
 const firebase = require('./firebase.js');
 const { tictactoe } = require('./reducer-tictactoe.js');
+const { auth } = require('./auth/reducers.js');
 const { initAuth } = require('./auth/actions.js');
 
 const store = createStore(
-  tictactoe,
+  combineReducers({tictactoe, auth}),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
   applyMiddleware(
     ReduxThunk,
@@ -21,9 +23,9 @@ const store = createStore(
 
 const mapStateToSymProps = (state) => {
   return {
-    player: state.player,
-    status: state.status,
-    level: state.level
+    player: state.tictactoe.player,
+    status: state.tictactoe.status,
+    level: state.tictactoe.level
   }
 };
 
@@ -65,7 +67,7 @@ const SymbolChooser = connect(
 
 const mapStateToLevelProps = (state) => {
   return {
-    level: state.level
+    level: state.tictactoe.level
   }
 };
 
@@ -124,8 +126,8 @@ const Board = ({board, status, onCellClick}) => {
 
 const mapStateToProps = (state) => {
   return {
-    board: state.board,
-    status: state.status
+    board: state.tictactoe.board,
+    status: state.tictactoe.status
   }
 };
 
@@ -206,11 +208,11 @@ ReactDOM.render(
   document.getElementById('game')
 );
 
-// store.dispatch(initAuth);
+store.dispatch(initAuth);
 
 
 store.subscribe(() => {
-  if (store.getState().status !== 'wait' && store.getState().status !== 'running' && store.getState().status !== 'delay') {
+  if (store.getState().tictactoe.status !== 'wait' && store.getState().tictactoe.status !== 'running' && store.getState().tictactoesss.status !== 'delay') {
     setTimeout(() => {
       store.dispatch({
         type: 'RESET',

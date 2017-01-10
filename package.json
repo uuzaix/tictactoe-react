@@ -8,6 +8,7 @@
     "build": "webpack",
     "watch": "webpack --watch",
     "dev": "webpack-dev-server",
+    "dev-inline": "webpack-dev-server --inline",
     "firebase": "firebase serve"
   },
   "author": "",
@@ -29,6 +30,7 @@
     "expect": "^1.20.2",
     "firebase-tools": "^3.1.0",
     "mocha": "^3.2.0",
+    "redux-logger": "^2.7.4",
     "webpack": "^1.13.3",
     "webpack-dev-server": "^1.16.2"
   },

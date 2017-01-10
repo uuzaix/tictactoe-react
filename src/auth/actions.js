@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 
-import { firebaseApp, firebaseAuth } from '../firebase.js';
+import { firebaseApp, firebaseAuth, database } from '../firebase.js';
 
 const loginSuccess = user => {
   return {
@@ -86,31 +86,6 @@ export const initAuth = () => {
 // }
 
 
-const btnLogout = document.getElementById('logout');
-btnLogout.addEventListener('click', e => {
-  firebase.auth().signOut().then(function () {
-    // Sign-out successful.
-    console.log('signout is successful');
-  }, function (error) {
-    // An error happened.
-    console.log('logout error', error);
-  });
-})
-
-firebase.auth().onAuthStateChanged(firebaseUser => {
-  if (firebaseUser) {
-    console.log('firebaseUser:', firebaseUser);
-    btnLogout.classList.remove('hide');
-    // btnLogin.classList.add('hide');
-  } else {
-    console.log('not signed in');
-    // btnLogin.classList.remove('hide');
-    btnLogout.classList.add('hide');
-  }
-});
-
-const database = firebase.database();
-
 function writeUserState(state) {
   if (isAuth()) {
     const userId = firebase.auth().currentUser.uid;
@@ -121,7 +96,7 @@ function writeUserState(state) {
 }
 
 function getUserState(userId) {
-  return firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
+  return database.ref('/users/' + userId).once('value').then(function (snapshot) {
     return snapshot.val().state;
   });
 }
@@ -131,12 +106,4 @@ function isAuth() {
   return userId !== null ? true : false
 }
 
-// function initAuth(dispatch) {
-//   if (isAuth) {
-//     const userId = firebase.auth();
-//     const state = getUserState(userId.uid);
-//     dispatch({ type: 'RECEIVE_STATE', payload: state });
-//   }
-// }
-
-module.exports = { writeUserState, login, isAuth, initAuth }
+// module.exports = { writeUserState, login, isAuth, initAuth }
