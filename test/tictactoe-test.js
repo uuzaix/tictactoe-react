@@ -1,8 +1,7 @@
-import expect from 'expect';
+const expect = require('expect');
 
 import { tictactoe } from '../src/reducer-tictactoe.js';
 import { findEmpty, isFinished } from '../src/game.js';
-
 
 describe('tictactoe', function () {
   it('should set value of a choosen cell to user symbol', function () {

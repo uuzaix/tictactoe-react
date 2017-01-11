@@ -1,4 +1,4 @@
-import expect from 'expect';
+const expect = require('expect');
 
 import { findEmpty, isFinished, findBestMove, calculateScore, minMax } from '../src/game.js';
 

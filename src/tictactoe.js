@@ -7,6 +7,7 @@ import createLogger from 'redux-logger';
 
 import firebase from './firebase.js';
 import { tictactoe } from './reducer-tictactoe.js';
+import { Header } from './views/components/header.js';
 import { auth } from './auth/reducers.js';
 import { initAuth } from './auth/actions.js';
 
@@ -208,7 +209,7 @@ ReactDOM.render(
   document.getElementById('game')
 );
 
-store.dispatch(initAuth);
+store.dispatch(initAuth());
 
 
 store.subscribe(() => {

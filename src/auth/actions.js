@@ -15,7 +15,7 @@ const logoutSuccess = () => {
   }
 }
 
-export const login = (providerName = 'github') => {
+const login = (providerName = 'github') => {
   let provider = new firebase.auth.GithubAuthProvider();
   switch (providerName) {
     case 'github':
@@ -24,15 +24,20 @@ export const login = (providerName = 'github') => {
       provider = new firebase.auth.GoogleAuthProvider();
       return loginWithProvider(provider);
     default:
-      console.error('unknown provider name', providerName);
+      console.error('Oops. unknown provider name', providerName);
   }
 }
 
 const loginWithProvider = (provider) => {
   return dispatch => {
-    firebaseAuth.signInWithProvider(provider)
+    firebaseAuth.signInWithPopup(provider)
       .then(result => dispatch(loginSuccess(result.user)))
   }
+}
+
+export const loginWithGitHub = () => {
+  const provider = new firebase.auth.GithubAuthProvider();
+  return loginWithProvider(provider);
 }
 
 export const logout = () => {
@@ -56,54 +61,22 @@ export const initAuth = () => {
 
 // old actions - to modify
 
+// function writeUserState(state) {
+//   if (isAuth()) {
+//     const userId = firebase.auth().currentUser.uid;
+//     database.ref('users/' + userId).set({
+//       state: state
+//     });
+//   }
+// }
 
-// function loginWithGoogle() {
-//   const provider = new firebase.auth.GoogleAuthProvider();
-//   const auth = firebase.auth();
-//   return auth.signInWithPopup(provider).then(function (result) {
-//     var user = result.user;
-//     return getUserState(user.uid);
-//   }).catch(function (error) {
-//     // Handle Errors here.
-//     var errorCode = error.code;
-//     var errorMessage = error.message;
-//     console.log("signInWithPopup", errorCode, errorMessage);
+// function getUserState(userId) {
+//   return database.ref('/users/' + userId).once('value').then(function (snapshot) {
+//     return snapshot.val().state;
 //   });
 // }
 
-// function loginWithGitHub() {
-//   const provider = new firebase.auth.GithubAuthProvider();
-//   const auth = firebase.auth();
-//   return auth.signInWithPopup(provider).then(function (result) {
-//     var user = result.user;
-//     return getUserState(user.uid);
-//   }).catch(function (error) {
-//     // Handle Errors here.
-//     var errorCode = error.code;
-//     var errorMessage = error.message;
-//     console.log("signInWithPopup", errorCode, errorMessage);
-//   });
+// function isAuth() {
+//   const userId = firebase.auth()
+//   return userId !== null ? true : false
 // }
-
-
-function writeUserState(state) {
-  if (isAuth()) {
-    const userId = firebase.auth().currentUser.uid;
-    database.ref('users/' + userId).set({
-      state: state
-    });
-  }
-}
-
-function getUserState(userId) {
-  return database.ref('/users/' + userId).once('value').then(function (snapshot) {
-    return snapshot.val().state;
-  });
-}
-
-function isAuth() {
-  const userId = firebase.auth()
-  return userId !== null ? true : false
-}
-
-// module.exports = { writeUserState, login, isAuth, initAuth }
