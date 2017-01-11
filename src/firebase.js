@@ -1,4 +1,4 @@
-const firebase = require('firebase');
+import firebase from 'firebase';
 
 // Initialize Firebase
 var config = {

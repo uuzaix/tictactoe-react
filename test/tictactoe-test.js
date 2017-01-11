@@ -1,7 +1,7 @@
-const expect = require('expect');
+import expect from 'expect';
 
-const { tictactoe } = require('../src/reducer-tictactoe.js');
-const { findEmpty, isFinished } = require('../src/game.js');
+import { tictactoe } from '../src/reducer-tictactoe.js';
+import { findEmpty, isFinished } from '../src/game.js';
 
 
 describe('tictactoe', function () {

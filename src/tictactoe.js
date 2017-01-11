@@ -1,17 +1,17 @@
-const React = require('react');
-const ReactDOM = require('react-dom');
-const { createStore, applyMiddleware, combineReducers } = require('redux');
-const { Provider, connect } = require('react-redux');
-const ReduxThunk = require('redux-thunk').default;
-const createLogger = require('redux-logger');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { Provider, connect } from 'react-redux';
+import ReduxThunk from 'redux-thunk';
+import createLogger from 'redux-logger';
 
-const firebase = require('./firebase.js');
-const { tictactoe } = require('./reducer-tictactoe.js');
-const { auth } = require('./auth/reducers.js');
-const { initAuth } = require('./auth/actions.js');
+import firebase from './firebase.js';
+import { tictactoe } from './reducer-tictactoe.js';
+import { auth } from './auth/reducers.js';
+import { initAuth } from './auth/actions.js';
 
 const store = createStore(
-  combineReducers({tictactoe, auth}),
+  combineReducers({ tictactoe, auth }),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
   applyMiddleware(
     ReduxThunk,
@@ -144,7 +144,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onCellClick: (id) => {
       dispatch(moveAsync(id));
-      writeUserState(store.getState())
+      // writeUserState(store.getState())
     }
   }
 };
@@ -212,7 +212,7 @@ store.dispatch(initAuth);
 
 
 store.subscribe(() => {
-  if (store.getState().tictactoe.status !== 'wait' && store.getState().tictactoe.status !== 'running' && store.getState().tictactoesss.status !== 'delay') {
+  if (store.getState().tictactoe.status !== 'wait' && store.getState().tictactoe.status !== 'running' && store.getState().tictactoe.status !== 'delay') {
     setTimeout(() => {
       store.dispatch({
         type: 'RESET',

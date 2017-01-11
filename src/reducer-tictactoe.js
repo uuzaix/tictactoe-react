@@ -1,4 +1,4 @@
-const { isFinished, gameStatusMessage, getStateAfterMove, chooseResponseMove } = require('./game.js');
+import { isFinished, gameStatusMessage, getStateAfterMove, chooseResponseMove } from './game.js';
 
 const defaultState = { board: '         '.split(''), player: '?', status: 'wait', level: '' };
 

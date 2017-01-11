@@ -1,6 +1,6 @@
-const expect = require('expect');
+import expect from 'expect';
 
-const { findEmpty, isFinished, findBestMove, calculateScore, minMax } = require('../src/game.js');
+import { findEmpty, isFinished, findBestMove, calculateScore, minMax } from '../src/game.js';
 
 describe('findEmpty', function () {
   it('should find all empty cells', function () {
