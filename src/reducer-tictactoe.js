@@ -2,7 +2,7 @@ import { isFinished, gameStatusMessage, getStateAfterMove, chooseResponseMove } 
 
 const defaultState = { board: '         '.split(''), player: '?', status: 'wait', level: '' };
 
-const tictactoe = (state = defaultState, action) => {
+export const tictactoe = (state = defaultState, action) => {
   switch (action.type) {
     case 'MOVE_USER':
       if (state.player !== '?' && state.status === 'running' && state.level !== '' && state.board[action.index] === ' ') {
@@ -46,4 +46,4 @@ const tictactoe = (state = defaultState, action) => {
   }
 }
 
-module.exports = { tictactoe };
+// module.exports = { tictactoe };

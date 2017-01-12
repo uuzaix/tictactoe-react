@@ -4,9 +4,10 @@ import { connect } from 'react-redux';
 import * as authActions from '../../auth/actions.js';
 
 
-const LoginWithProvider = ({login}) => {
+const LoginWithProvider = ({login, provider}) => {
+  console.log(login);
   return (
-    <button onClick={login}>Login</button>
+    <button onClick={login}>Login with {provider}</button>
   )
 };
 
@@ -23,11 +24,15 @@ const mapStateToProps = state => {
   }
 };
 
-const header = ({authenticated, loginWithGitHub, logout}) => {
+const header = ({authenticated, loginWithGitHub, loginWithGoogle, logout}) => {
   return (
     <div>
       <h1>TicTacToe</h1>
-      {authenticated ? <Logout logout={logout} /> : <LoginWithProvider login={loginWithGitHub} />}
+      {authenticated ? <Logout logout={logout} /> :
+        <div>
+          <LoginWithProvider login={loginWithGitHub} provider={'Github'} />
+          <LoginWithProvider login={loginWithGoogle} provider={'Google'} />
+        </div>}
     </div>
   )
 }

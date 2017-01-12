@@ -15,7 +15,7 @@ const logoutSuccess = () => {
   }
 }
 
-const login = (providerName = 'github') => {
+export const login = (providerName = 'github') => {
   let provider = new firebase.auth.GithubAuthProvider();
   switch (providerName) {
     case 'github':
@@ -37,6 +37,11 @@ const loginWithProvider = (provider) => {
 
 export const loginWithGitHub = () => {
   const provider = new firebase.auth.GithubAuthProvider();
+  return loginWithProvider(provider);
+}
+
+export const loginWithGoogle = () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
   return loginWithProvider(provider);
 }
 
