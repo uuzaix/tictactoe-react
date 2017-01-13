@@ -66,38 +66,6 @@ const SymbolChooser = connect(
   mapDispatchToSymProps
 )(PlayerSymbol);
 
-const mapStateToLevelProps = (state) => {
-  return {
-    level: state.tictactoe.level
-  }
-};
-
-const mapDispatchToLevelProps = (dispatch) => {
-  return {
-    onLevelClick: (level) => {
-      dispatch({ type: 'CHOOSE_LEVEL', level: level })
-    }
-  }
-};
-
-const Level = ({level, onLevelClick}) => {
-  if (level === '') {
-    return (
-      <p>Choose level
-        <a href='#' onClick={() => onLevelClick('Profi')}> Profi </a> or
-        <a href='#' onClick={() => onLevelClick('Novice')}> Novice </a></p>
-    )
-  } else {
-    return (
-      <p>{level} level</p>
-    )
-  }
-};
-
-const LevelChooser = connect(
-  mapStateToLevelProps,
-  mapDispatchToLevelProps
-)(Level);
 
 const Cell = ({id, content, status, onCellClick}) => (
   <div id={'cell-' + id} onClick={() =>
@@ -164,16 +132,20 @@ const Tictactoe = connect(
   mapDispatchToProps
 )(Board);
 
-const mapStateToResetProps = (state) => {
-  return {
-  }
-};
 
-const mapDispatchToResetProps = (dispatch) => {
-  return {
-    onResetClick: () => {
-      dispatch({ type: 'RESET' })
-    }
+//footer
+
+const LevelChooser = ({level, onLevelClick}) => {
+  if (level === '') {
+    return (
+      <p>Choose level
+        <a href='#' onClick={() => onLevelClick('Profi')}> Profi </a> or
+        <a href='#' onClick={() => onLevelClick('Novice')}> Novice </a></p>
+    )
+  } else {
+    return (
+      <p>{level} level</p>
+    )
   }
 };
 
@@ -184,10 +156,36 @@ const ResetButton = ({onResetClick}) => {
   )
 };
 
-const Reset = connect(
-  mapStateToResetProps,
-  mapDispatchToResetProps
-)(ResetButton);
+const mapStateToFooterProps = (state) => {
+  return {
+    level: state.tictactoe.level
+  }
+};
+
+const mapDispatchToFooterProps = (dispatch) => {
+  return {
+    onLevelClick: (level) => {
+      dispatch({ type: 'CHOOSE_LEVEL', level: level })
+    },
+    onResetClick: () => {
+      dispatch({ type: 'RESET' })
+    }
+  }
+};
+
+const footer = ({level, onLevelClick, onResetClick}) => {
+  return (
+    <div>
+      <LevelChooser level={level} onLevelClick={onLevelClick} />
+      <ResetButton onResetClick={onResetClick} />
+    </div>
+  )
+}
+
+const Footer = connect(
+  mapStateToFooterProps,
+  mapDispatchToFooterProps
+)(footer);
 
 ////////////////////////
 ////////////////////////////
@@ -197,8 +195,7 @@ const App = () => (
     <Header />
     <SymbolChooser />
     <Tictactoe />
-    <LevelChooser />
-    <Reset />
+    <Footer />
   </div>
 );
 
